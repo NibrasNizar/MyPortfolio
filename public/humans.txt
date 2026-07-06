@@ -1,0 +1,10 @@
+/* TEAM */
+Engineer & Designer: Nibras Ahmed Nizar
+Contact: nibras.nizar2311@gmail.com
+LinkedIn: https://www.linkedin.com/in/nibras-ahmed-nizar/
+GitHub: https://github.com/NibrasNizar
+Location: Bengaluru, India
+
+/* SITE */
+Built with: Astro, Tailwind CSS
+Last update: 2026

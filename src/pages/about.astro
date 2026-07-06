@@ -20,11 +20,21 @@ const languages = [
   { name: 'Arabic', level: 'Professional working proficiency — works directly with Gulf clients in Arabic' },
   { name: 'Hindi', level: 'Native' },
 ];
+
+const personId = new URL('/#person', Astro.site).toString();
+const extraJsonLd = [
+  {
+    '@type': 'ProfilePage',
+    mainEntity: { '@id': personId },
+    url: new URL('/about', Astro.site).toString(),
+  },
+];
 ---
 
 <BaseLayout
   title="About"
   description="Education, certifications, awards, languages, and engineering philosophy — Nibras Ahmed Nizar, MLOps Engineer and Technical Lead."
+  extraJsonLd={extraJsonLd}
 >
   <div class="mx-auto max-w-3xl px-6 py-16">
     <SectionHeading eyebrow="About" title="Nibras Ahmed Nizar" />
