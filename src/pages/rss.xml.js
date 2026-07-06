@@ -6,7 +6,7 @@ export async function GET(context) {
   const posts = await getCollection('writing', ({ data }) => !data.draft);
 
   return rss({
-    title: `${SITE.name} — Writing`,
+    title: `${SITE.name} · Writing`,
     description: 'Technical writing on production MLOps and agentic AI systems.',
     site: context.site,
     items: posts

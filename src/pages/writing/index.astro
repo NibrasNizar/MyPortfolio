@@ -13,19 +13,19 @@ const formatter = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'lo
 
 <BaseLayout
   title="Writing"
-  description="Technical writing on production MLOps and agentic AI — the reasoning behind the case studies, not just the results."
+  description="Technical writing on production MLOps and agentic AI: the reasoning behind the case studies, not just the results."
 >
   <div class="mx-auto max-w-3xl px-6 py-16">
     <SectionHeading
       eyebrow="Writing"
       title="Notes from production"
-      description="Longer-form write-ups on the decisions behind the case studies — what worked, what didn't, and why."
+      description="Longer-form write-ups on the decisions behind the case studies: what worked, what didn't, and why."
     />
 
     {
       posts.length === 0 ? (
         <p class="mt-12 text-sm text-muted-foreground">
-          Nothing published yet — the first posts are in progress. In the meantime,{' '}
+          Nothing published yet, the first posts are in progress. In the meantime,{' '}
           <a href="/projects" class="text-accent hover:underline">
             the case studies
           </a>{' '}

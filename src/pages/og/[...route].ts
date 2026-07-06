@@ -21,7 +21,7 @@ const staticPages = {
   },
   courses: {
     title: 'Courses',
-    description: 'Path to Senior MLOps — Foundations, MLOps Engineering, AI/GenAI.',
+    description: 'Path to Senior MLOps: Foundations, MLOps Engineering, AI/GenAI.',
   },
   about: {
     title: 'About',
@@ -29,7 +29,7 @@ const staticPages = {
   },
   writing: {
     title: 'Writing',
-    description: 'Notes from production — MLOps and agentic AI.',
+    description: 'Notes from production: MLOps and agentic AI.',
   },
 };
 

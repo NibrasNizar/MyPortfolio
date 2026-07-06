@@ -23,7 +23,7 @@ const { href, title, summary, stack, headlineMetric } = Astro.props;
     {
       headlineMetric && (
         <p class="mt-4 font-mono text-sm text-accent">
-          {headlineMetric.value} <span class="text-muted-foreground">— {headlineMetric.label}</span>
+          {headlineMetric.value} <span class="text-muted-foreground">· {headlineMetric.label}</span>
         </p>
       )
     }

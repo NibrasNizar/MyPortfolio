@@ -46,7 +46,7 @@ const jsonLd = {
     {
       '@type': 'WebSite',
       '@id': websiteId,
-      name: `${SITE.name} — ${SITE.title}`,
+      name: `${SITE.name} · ${SITE.title}`,
       url: new URL('/', Astro.site).toString(),
       author: { '@id': personId },
     },
