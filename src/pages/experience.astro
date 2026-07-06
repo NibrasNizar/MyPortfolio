@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import TimelineItem from '../components/TimelineItem.astro';
+
+const roles = [
+  {
+    role: 'MLOps Engineer / Technical Lead',
+    org: 'UST (Client: Applied Materials)',
+    timeframe: 'Sep 2025 – Present · Bengaluru',
+    bullets: [
+      'Designed and delivered "Defect Agent," a chat-first AI app linking 4 internal systems on a 3-node LangGraph pipeline with memory and WebSocket streaming, growing to 300+ active users against a 5,000+ target.',
+      'Moved 6+ production ML models from fixed compute to serverless Databricks Model Serving using a custom MLflow PyFunc wrapper with scale-to-zero settings.',
+      'Built an async, job-based replication pipeline to safely move 7,000+ records and 21,000+ images into a central store; automated hardware PDF ingestion into Databricks.',
+      'Unified model and artifact versioning across the team with Unity Catalog and MLflow 3.x, reaching 100% lineage tracking from live models back to training runs.',
+      'Set up production monitoring with MLflow tracing and inference tables; led a GPU optimization drive that cut quarterly cloud spend 50% (~$17K → ~$8.5K).',
+      'Built Jenkins and Terraform pipelines enforcing code-quality gates (Pylint ≥9.0, Bandit, 80%+ test coverage, SonarQube); migrated 15+ legacy notebooks to OAuth M2M auth.',
+      "Wrote the team's core MLOps standards and reusable LangGraph design patterns; built an 8-part technical interview kit and ran hiring screens.",
+    ],
+    headlineOutcome: '50% cloud cost cut · 300+ agent users · 6+ models to serverless',
+  },
+  {
+    role: 'AI/ML Engineer (Freelance)',
+    org: 'Saudi Arabia Client',
+    timeframe: 'Sep 2024 – May 2025 · Remote',
+    bullets: [
+      'Owned the end-to-end training pipeline for an Arabic GenAI assistant — fine-tuning LLMs via AWS SageMaker, tracking runs with MLflow, and serving via FastAPI behind AWS API Gateway and Lambda.',
+      'Containerized application components on AWS EKS with GitHub Actions CI/CD.',
+      'Built automated drift-triggered retraining jobs on AWS Glue and EventBridge, achieving sub-100ms inference latency via ONNX.',
+    ],
+    headlineOutcome: 'Sub-100ms latency via ONNX · Automated drift-triggered retraining',
+  },
+  {
+    role: 'Software Engineer (AI/ML)',
+    org: 'Intel',
+    timeframe: 'Oct 2021 – Aug 2024 · Bengaluru',
+    bullets: [
+      "Managed the MLOps stack for Intel's EDA toolchain ML components — Docker, MLflow tracking, and Jenkins CI/CD — cutting model-integration latency 20%.",
+      'Built and embedded "TimeToSynthesize," an XGBoost model predicting FPGA hardware synthesis duration, cutting design-planning cycles 15%.',
+      'Partnered with the Intel Scenescape team to build end-to-end MLOps pipelines and optimize production computer vision models for FPGA hardware deployment.',
+      'Engineered a custom C++ formal-verification pipeline, cutting compile times 30–50% for reusable IP blocks.',
+      'Received two Intel "Above & Beyond" awards — Results Driven (2023) and Customer First (2022) — for cross-team delivery. Mentored 2 junior engineers.',
+    ],
+    headlineOutcome: '2× Intel "Above & Beyond" awards · 20% faster model integration',
+  },
+  {
+    role: 'Associate Engineer',
+    org: 'PoleToWin India',
+    timeframe: 'Mar 2020 – Feb 2021 · Bengaluru',
+    bullets: [
+      'Developed classification models (Logistic Regression, Random Forest) for defect prediction, improving detection accuracy 15% and cutting test cycles 20%.',
+      'Built Python text-parsing and sensor-log analysis modules with Pandas and NumPy, accelerating QA debug lifecycles within an Agile cadence.',
+    ],
+    headlineOutcome: '15% better defect detection · 20% faster test cycles',
+    isLast: true,
+  },
+];
+---
+
+<BaseLayout
+  title="Experience"
+  description="Six years across Intel, a semiconductor enterprise (via UST), and freelance GenAI work — production MLOps and agentic AI at increasing scale."
+>
+  <div class="mx-auto max-w-3xl px-6 py-16">
+    <SectionHeading
+      eyebrow="Career"
+      title="Experience"
+      description="Six years, escalating scope — from classical ML in QA to leading agentic AI platforms serving hundreds of engineers."
+    />
+
+    <div class="mt-12 space-y-12">
+      {
+        roles.map((r) => (
+          <TimelineItem
+            role={r.role}
+            org={r.org}
+            timeframe={r.timeframe}
+            headlineOutcome={r.headlineOutcome}
+            isLast={r.isLast}
+          >
+            <ul class="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
+              {r.bullets.map((bullet) => (
+                <li>{bullet}</li>
+              ))}
+            </ul>
+          </TimelineItem>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>
