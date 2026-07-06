@@ -1,0 +1,40 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  status: 'available' | 'coming-soon';
+}
+
+const { href, title, summary, status } = Astro.props;
+---
+
+<a
+  href={href}
+  class="group flex h-full flex-col justify-between rounded-xl border border-border bg-primary/20 p-6 transition-all hover:-translate-y-1 hover:border-accent"
+>
+  <div>
+    <div class="flex items-center justify-between gap-2">
+      <h3 class="text-lg font-semibold text-foreground group-hover:text-accent">{title}</h3>
+      {
+        status === 'coming-soon' ? (
+          <span class="shrink-0 rounded-full border border-border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
+            Coming soon
+          </span>
+        ) : (
+          <span class="shrink-0 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-accent">
+            Available
+          </span>
+        )
+      }
+    </div>
+    <p class="mt-2 text-sm text-muted-foreground">{summary}</p>
+  </div>
+
+  <p class="mt-6 font-mono text-sm text-accent">
+    View course
+    <span aria-hidden="true" class="inline-block transition-transform group-hover:translate-x-1">
+      →
+    </span>
+  </p>
+</a>

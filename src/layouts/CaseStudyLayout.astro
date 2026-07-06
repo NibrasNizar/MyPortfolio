@@ -1,0 +1,82 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TagBadge from '../components/TagBadge.astro';
+
+interface Props {
+  title: string;
+  summary: string;
+  role: string;
+  timeframe: string;
+  stack: string[];
+  metrics: { label: string; value: string }[];
+  links?: { repo?: string; demo?: string };
+}
+
+const { title, summary, role, timeframe, stack, metrics, links } = Astro.props;
+---
+
+<BaseLayout title={title} description={summary}>
+  <article class="mx-auto max-w-3xl px-6 py-16">
+    <a href="/projects" class="font-mono text-sm text-accent hover:underline">← All projects</a>
+
+    <h1 class="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{title}</h1>
+    <p class="mt-4 text-lg text-muted-foreground">{summary}</p>
+
+    <dl class="mt-8 grid grid-cols-2 gap-6 rounded-xl border border-border bg-primary/20 p-6 sm:grid-cols-4">
+      <div>
+        <dt class="font-mono text-xs uppercase tracking-wide text-muted-foreground">Role</dt>
+        <dd class="mt-1 text-sm text-foreground">{role}</dd>
+      </div>
+      <div>
+        <dt class="font-mono text-xs uppercase tracking-wide text-muted-foreground">Timeframe</dt>
+        <dd class="mt-1 text-sm text-foreground">{timeframe}</dd>
+      </div>
+      {
+        metrics.slice(0, 2).map((metric) => (
+          <div>
+            <dt class="font-mono text-xs uppercase tracking-wide text-muted-foreground">{metric.label}</dt>
+            <dd class="mt-1 font-mono text-sm text-accent">{metric.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="mt-6 flex flex-wrap gap-2">
+      {stack.map((tech) => <TagBadge label={tech} />)}
+    </div>
+
+    {
+      metrics.length > 2 && (
+        <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
+          {metrics.slice(2).map((metric) => (
+            <div class="rounded-lg border border-border p-4">
+              <p class="font-mono text-lg text-accent">{metric.value}</p>
+              <p class="mt-1 text-xs text-muted-foreground">{metric.label}</p>
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      links && (links.repo || links.demo) && (
+        <div class="mt-6 flex gap-4">
+          {links.repo && (
+            <a href={links.repo} class="font-mono text-sm text-accent hover:underline" rel="noopener noreferrer" target="_blank">
+              Repo →
+            </a>
+          )}
+          {links.demo && (
+            <a href={links.demo} class="font-mono text-sm text-accent hover:underline" rel="noopener noreferrer" target="_blank">
+              Demo →
+            </a>
+          )}
+        </div>
+      )
+    }
+
+    <div class="prose prose-invert prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-accent prose-code:text-accent prose-strong:text-foreground mt-12 max-w-none">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
