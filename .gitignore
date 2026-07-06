@@ -18,6 +18,10 @@ pnpm-debug.log*
 .env
 .env.production
 
+# python bytecode
+__pycache__/
+*.pyc
+
 # editor / OS
 .vscode/*
 !.vscode/extensions.json
