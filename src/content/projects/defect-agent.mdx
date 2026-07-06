@@ -1,0 +1,81 @@
+---
+title: "Defect Agent — A Chat-First Agentic AI System"
+summary: "A LangGraph-based AI agent that unifies four internal defect-analysis systems behind one conversational interface, cutting root-cause time from hours to minutes."
+role: "Architect & Technical Lead"
+timeframe: "Jun 2026 – present"
+tags: ["Agentic AI", "GenAI", "Platform"]
+stack: ["LangGraph", "Python", "WebSocket", "PostgreSQL", "React", "OpenShift/AKS", "Databricks"]
+featured: true
+order: 1
+metrics:
+  - label: "Active users"
+    value: "300+"
+  - label: "Target time-to-root-cause"
+    value: "~2h → ~30-45min"
+  - label: "Internal systems unified"
+    value: "4+"
+  - label: "User target"
+    value: "5,000+"
+---
+
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+
+## The problem
+
+Semiconductor defect analysis at enterprise scale means engineers context-switching across
+four separate internal systems to answer one question: *what caused this defect, and have we
+seen it before?* Each system has its own UI, its own query language, and its own blind spots.
+A field engineer chasing a live production issue could easily burn two hours stitching
+together context that a machine could assemble in minutes — if something could actually talk
+to all four systems at once.
+
+**Constraints:**
+- Two very different user personas (field engineers need an instant acknowledgment and a
+  fast, actionable answer; process engineers want a detailed, evidence-backed report) had to
+  be served by the same agent without forking the product.
+- Responses needed to stream, not block — nobody waits three minutes staring at a spinner
+  for a defect investigation.
+- The agent had to be trustworthy enough to route real production decisions through it, which
+  ruled out a single opaque LLM call in favor of an inspectable, structured pipeline.
+
+## Architecture
+
+<ArchitectureDiagram
+  caption="3-node LangGraph pipeline with persistent memory, streamed over WebSocket to a React front end."
+  nodes={[
+    { label: 'Input Processing', sublabel: 'Intent + entity extraction' },
+    { label: 'Planning / Orchestration', sublabel: 'Routes across 4 internal systems' },
+    { label: 'Synthesis', sublabel: 'Persona-aware response generation' },
+  ]}
+/>
+
+The agent is a 3-node LangGraph pipeline — input processing, planning/orchestration, and
+synthesis — with LangGraph memory carrying context across turns. Responses stream over
+WebSocket into a React front end so users see progress immediately rather than waiting on a
+single blocking call. The whole system runs on a mix of OpenShift (ARO) and AKS in front of
+Databricks-hosted model serving.
+
+## Key decisions
+
+- **Three nodes, not one prompt.** Splitting input processing, orchestration, and synthesis
+  into distinct graph nodes made the agent's reasoning inspectable and testable stage-by-stage,
+  instead of debugging one enormous prompt when an answer went wrong.
+- **Persona-aware tiered responses.** Rather than one response format, the synthesis node
+  models field- vs. process-engineer needs explicitly: an instant acknowledgment, a critical
+  response for time-sensitive issues, and a detailed report for deeper investigation. Same
+  agent, different depth for different jobs.
+- **Streaming over WebSocket, not polling.** Given multi-system orchestration can take real
+  wall-clock time, streaming partial progress was a UX requirement, not a nice-to-have.
+
+## Outcome
+
+Growing toward 300+ active users against a 5,000+ target, with a design goal of pulling
+time-to-root-cause on complex cases from roughly two hours down to 30–45 minutes. The
+project also doubles as the reference architecture other teams now build their own
+LangGraph-based agents against.
+
+## What I'd do differently
+
+Given the persona-aware tiering came after the first version shipped a single response
+format, I'd bake in persona detection from day one next time — retrofitting response depth
+onto an existing synthesis node was more invasive than designing for it up front.

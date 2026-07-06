@@ -1,0 +1,67 @@
+---
+title: "Real-Time Telemetry Anomaly Detection"
+summary: "An ensemble anomaly-detection model for real-time telemetry that hit 95% detection accuracy and secured a ₹1.8M ISRO development grant."
+role: "Lead Engineer"
+timeframe: "2021 – 2022"
+tags: ["Machine Learning", "Research"]
+stack: ["Python", "Robust Random Cut Forest", "Autoencoders", "Time Series"]
+order: 6
+metrics:
+  - label: "Detection accuracy"
+    value: "95%"
+  - label: "Response time"
+    value: "30% faster"
+  - label: "Grant secured"
+    value: "₹1.8M (ISRO)"
+---
+
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+
+## The problem
+
+Real-time telemetry anomaly detection has a narrow margin for error in both directions: miss
+a real anomaly and a fault goes undetected; flag too many false positives and operators start
+ignoring the system entirely. Classical single-method approaches (a threshold rule, a single
+statistical test) tend to catch one anomaly *shape* well and miss others — telemetry drift
+looks nothing like a sudden spike, and a single detector rarely handles both.
+
+**Constraints:**
+- Detection needed to run in real time against streaming telemetry, not as an offline batch
+  analysis.
+- The system needed to generalize across different anomaly shapes (gradual drift, sudden
+  spikes, structural regime changes) without hand-tuning a separate detector for each.
+
+## Architecture
+
+<ArchitectureDiagram
+  caption="Four complementary detection methods feed an ensemble, so no single anomaly shape slips through."
+  nodes={[
+    { label: 'Rolling Mean', sublabel: 'Baseline drift signal' },
+    { label: 'EMA', sublabel: 'Weighted recent-trend signal' },
+    { label: 'Autoencoder', sublabel: 'Reconstruction-error anomalies' },
+    { label: 'Robust Random Cut Forest', sublabel: 'Structural outlier detection' },
+  ]}
+/>
+
+Rather than picking one detection method, the system ensembles four: rolling-mean and EMA
+signals to catch gradual drift, an autoencoder to catch anomalies via reconstruction error,
+and a Robust Random Cut Forest to catch structural outliers a purely statistical method would
+miss. Combining outputs across all four gave broader anomaly-shape coverage than any single
+method running alone.
+
+## Key decisions
+
+- **Ensemble over a single best-performing model.** Individually, each of the four methods
+  had blind spots against certain anomaly shapes. Ensembling traded a small amount of
+  simplicity for meaningfully broader coverage — worth it for a system where a missed anomaly
+  has real operational cost.
+- **Classical signals alongside a learned model.** Pairing simple, interpretable
+  signals (rolling mean, EMA) with a learned autoencoder meant the system didn't depend
+  entirely on a black-box model's behavior being well-calibrated on telemetry patterns it
+  hadn't seen during training.
+
+## Outcome
+
+The ensemble reached 95% detection accuracy with 30% faster response times than the prior
+approach, and the results were strong enough to secure a ₹1,800,000 ISRO "Respond Basket"
+development grant to continue the work.

@@ -1,0 +1,57 @@
+---
+interface Node {
+  label: string;
+  sublabel?: string;
+}
+
+interface Props {
+  caption: string;
+  nodes: Node[];
+}
+
+const { caption, nodes } = Astro.props;
+---
+
+<figure class="not-prose my-8 rounded-xl border border-border bg-primary/20 p-6 sm:p-8">
+  <div class="flex flex-col items-stretch gap-0 sm:flex-row sm:items-center">
+    {
+      nodes.map((node, i) => (
+        <>
+          <div class="flex min-h-20 flex-1 flex-col items-center justify-center rounded-lg border border-border bg-background px-4 py-3 text-center">
+            <p class="font-mono text-sm font-medium text-foreground">{node.label}</p>
+            {node.sublabel && <p class="mt-1 text-xs text-muted-foreground">{node.sublabel}</p>}
+          </div>
+          {i < nodes.length - 1 && (
+            <div class="flex items-center justify-center py-1 text-accent sm:px-2 sm:py-0">
+              <svg
+                class="hidden h-5 w-5 sm:block"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <polyline points="14 6 20 12 14 18" />
+              </svg>
+              <svg
+                class="h-5 w-5 sm:hidden"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="12" y1="4" x2="12" y2="20" />
+                <polyline points="6 14 12 20 18 14" />
+              </svg>
+            </div>
+          )}
+        </>
+      ))
+    }
+  </div>
+  <figcaption class="mt-4 text-center text-sm text-muted-foreground">{caption}</figcaption>
+</figure>

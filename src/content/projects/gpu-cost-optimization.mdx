@@ -1,0 +1,56 @@
+---
+title: "GPU Cost Optimization"
+summary: "Led the architecture decision behind an on-demand GPU testing strategy that cut quarterly compute spend roughly in half without cutting capability."
+role: "Technical Lead"
+timeframe: "Feb 2025"
+tags: ["MLOps", "Cost Engineering"]
+stack: ["GPU Model Serving", "Databricks", "On-Demand Compute"]
+featured: true
+order: 3
+metrics:
+  - label: "Quarterly GPU spend"
+    value: "~$17K → ~$8.5K"
+  - label: "Cost reduction"
+    value: "~50%"
+  - label: "Capability lost"
+    value: "None"
+---
+
+## The problem
+
+Testing GPU-backed models against fixed, always-on compute is simple to reason about and
+expensive to run. The team was paying for GPU capacity sized for peak testing load, all
+quarter, whether or not anyone was actively running tests that hour. At roughly $17K per
+quarter, this was the kind of budget line that gets a platform team asked hard questions in
+a planning review.
+
+**Constraints:**
+- Any change couldn't slow down or gate the teams actively using that GPU testing capacity —
+  cost-cutting that breaks velocity is a bad trade.
+- The decision needed to hold up across multiple concurrent programs with different testing
+  cadences, not just the one team that flagged the cost.
+
+## The decision
+
+Rather than negotiating a smaller fixed allocation (which just trades one static cost for a
+smaller static cost, with the same underlying waste), the fix was architectural: move to an
+on-demand testing strategy where GPU capacity is provisioned when a test run actually needs
+it and released immediately after, combined with an integrated-tool architecture that reduced
+redundant provisioning across teams.
+
+This is the same scale-to-zero principle behind the [serverless model-serving
+migration](/projects/serverless-model-serving), applied to test infrastructure instead of
+production inference — pay for GPU time you use, not GPU time you might use.
+
+## Outcome
+
+Quarterly GPU testing spend dropped from roughly $17K to roughly $8.5K — about a 50% cut —
+without reducing testing capability or throughput for any of the teams relying on that
+infrastructure. The on-demand pattern became the default architecture decision for GPU-backed
+testing going forward rather than a one-time exception.
+
+## What I'd do differently
+
+This was a fast, high-leverage architectural call, but it was reactive — triggered by a
+budget conversation rather than a proactive cost review. Instrumenting compute-cost-per-team
+dashboards earlier would have caught this before it needed to become a discussion at all.

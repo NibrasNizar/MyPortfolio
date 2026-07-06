@@ -1,0 +1,68 @@
+---
+title: "CI/CD & Quality-Gate Platform"
+summary: "Built the multi-environment Jenkins + Terraform pipeline that gates and ships the platform, enforcing code-quality and security checks before anything reaches production."
+role: "Pipeline Owner"
+timeframe: "2025 – 2026"
+tags: ["MLOps", "DevOps", "Security"]
+stack: ["Jenkins", "Terraform", "SonarQube", "Bandit", "Black/Pylint", "pytest", "Databricks Bundles"]
+order: 4
+metrics:
+  - label: "Test coverage gate"
+    value: "80%+"
+  - label: "Environments standardized"
+    value: "Dev → QA → Prod"
+  - label: "Manual release steps"
+    value: "Removed"
+---
+
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+
+## The problem
+
+Before this pipeline existed, shipping a change meant manual release steps threaded through
+dev, QA, and prod — the kind of process that works until someone's out sick or a step gets
+skipped under deadline pressure. Code quality and security scanning weren't consistently
+enforced, so issues that should have been caught pre-merge were instead caught in production,
+or not at all.
+
+**Constraints:**
+- The pipeline had to serve multiple concurrent programs with different release cadences
+  without becoming a bottleneck.
+- Quality gates needed to be strict enough to matter (not rubber-stamp checks) but fast enough
+  that engineers wouldn't route around them.
+
+## Architecture
+
+<ArchitectureDiagram
+  caption="Every change passes through the same gated pipeline regardless of which program it belongs to."
+  nodes={[
+    { label: 'Commit', sublabel: 'Black / Pylint formatting' },
+    { label: 'Quality Gates', sublabel: 'SonarQube · Bandit · pytest ≥80%' },
+    { label: 'Terraform IaC', sublabel: 'Environment provisioning' },
+    { label: 'Dev → QA → Prod', sublabel: 'Databricks asset bundle deploy' },
+  ]}
+/>
+
+Jenkins pipelines drive the build-and-deploy flow, with Terraform handling infrastructure as
+code so environments are provisioned consistently rather than hand-configured. Every change
+passes through formatting (Black/Pylint), static analysis and security scanning (SonarQube,
+Bandit), and a minimum 80% test coverage gate via pytest before it can move from dev toward
+QA and production.
+
+## Key decisions
+
+- **Infrastructure as code, not runbooks.** Terraform-managed environments meant dev, QA, and
+  prod stayed configuration-consistent by construction, instead of drifting apart through
+  manual changes over time.
+- **Gates enforced in CI, not in code review.** Putting SonarQube, Bandit, and coverage
+  thresholds into the pipeline itself — rather than relying on reviewers to catch issues —
+  made quality enforcement consistent regardless of who was reviewing that week.
+- **One pipeline, three concurrent programs.** Standardizing a single dev→QA→prod flow across
+  every program running on the platform meant one investment in pipeline quality paid off
+  everywhere, instead of three teams maintaining three release processes.
+
+## Outcome
+
+A standardized multi-environment pipeline with manual release steps removed entirely, raised
+baseline code quality across the platform, and security vulnerabilities caught before merge
+rather than after deployment.

@@ -1,0 +1,68 @@
+---
+title: "Computer Vision at the Edge: ADAS Detection & Automated Coupon Counting"
+summary: "Two real-time object-detection systems — a YOLOv5 ADAS pipeline under 100ms inference, and an RT-DETR pipeline that replaced a fully manual coupon-auditing process."
+role: "Engineer"
+timeframe: "Personal / Applied research"
+tags: ["Computer Vision", "Edge AI"]
+stack: ["YOLOv5", "RT-DETR", "ONNX", "Databricks", "MLflow", "Streamlit"]
+order: 7
+metrics:
+  - label: "ADAS mAP"
+    value: "92%"
+  - label: "ADAS inference time"
+    value: "<100ms"
+  - label: "Coupon auditing"
+    value: "Manual → automated"
+---
+
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+
+## The problem
+
+Two unrelated detection problems, one shared constraint: real-time object detection has to be
+fast enough to be useful, not just accurate in a notebook. An ADAS (advanced driver-assistance)
+system that takes 500ms per frame is a safety system that doesn't work in practice. A
+stub-to-coupon auditing process done entirely by hand doesn't scale past the volume a human
+can visually check.
+
+## ADAS object detection
+
+<ArchitectureDiagram
+  caption="YOLOv5 detection compiled to ONNX for sub-100ms inference, visualized on a live dashboard."
+  nodes={[
+    { label: 'YOLOv5 Detection', sublabel: '92% mAP' },
+    { label: 'ONNX Compilation', sublabel: 'Inference optimization' },
+    { label: 'Streamlit Dashboard', sublabel: 'Real-time ADAS visualization' },
+  ]}
+/>
+
+YOLOv5 handled real-time object detection for edge deployment, reaching 92% mAP. The model
+was compiled through ONNX specifically to pull inference time under 100ms — the difference
+between a system that could plausibly run in an ADAS context and one that's a research
+demo. Detections were mapped onto a Streamlit dashboard for live visualization.
+
+## Automated coupon counting
+
+A two-stage object-detection pipeline using RT-DETR, deployed on Databricks with MLflow
+tracking, automated stub-to-coupon detection end to end — replacing a process that had been
+entirely manual. Running it as a tracked, versioned pipeline (rather than a one-off script)
+meant the detection model could be retrained and redeployed the same way any other production
+model on the platform would be.
+
+## Key decisions
+
+- **ONNX compilation as a hard requirement, not an optimization pass.** For the ADAS pipeline,
+  sub-100ms inference wasn't a stretch goal — it was decided upfront as the bar that made the
+  system meaningful, which shaped the model and export choices from the start.
+- **RT-DETR over a simpler classical CV approach for coupon counting.** A fully manual process
+  was the baseline being replaced, so the detection approach was chosen for reliability at
+  production volume rather than for minimizing engineering effort.
+- **Treating both as production ML, not prototypes.** Both pipelines used MLflow tracking and
+  standard deployment patterns (Databricks, ONNX export) rather than staying notebook-bound
+  research code — the same production discipline applied at enterprise scale, applied here to
+  smaller-scope projects.
+
+## Outcome
+
+The ADAS pipeline reached 92% mAP with sub-100ms inference; the coupon-counting pipeline
+replaced an entirely manual auditing process with a tracked, versioned, automated one.
