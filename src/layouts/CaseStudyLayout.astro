@@ -22,7 +22,7 @@ const { title, summary, role, timeframe, stack, metrics, links } = Astro.props;
     <h1 class="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{title}</h1>
     <p class="mt-4 text-lg text-muted-foreground">{summary}</p>
 
-    <dl class="mt-8 grid grid-cols-2 gap-6 rounded-xl border border-border bg-primary/20 p-6 sm:grid-cols-4">
+    <dl class="mt-8 grid grid-cols-2 gap-6 rounded-xl border border-border bg-primary/20 p-6">
       <div>
         <dt class="font-mono text-xs uppercase tracking-wide text-muted-foreground">Role</dt>
         <dd class="mt-1 text-sm text-foreground">{role}</dd>
@@ -31,32 +31,22 @@ const { title, summary, role, timeframe, stack, metrics, links } = Astro.props;
         <dt class="font-mono text-xs uppercase tracking-wide text-muted-foreground">Timeframe</dt>
         <dd class="mt-1 text-sm text-foreground">{timeframe}</dd>
       </div>
-      {
-        metrics.slice(0, 2).map((metric) => (
-          <div>
-            <dt class="font-mono text-xs uppercase tracking-wide text-muted-foreground">{metric.label}</dt>
-            <dd class="mt-1 font-mono text-sm text-accent">{metric.value}</dd>
-          </div>
-        ))
-      }
     </dl>
 
     <div class="mt-6 flex flex-wrap gap-2">
       {stack.map((tech) => <TagBadge label={tech} />)}
     </div>
 
-    {
-      metrics.length > 2 && (
-        <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {metrics.slice(2).map((metric) => (
-            <div class="rounded-lg border border-border p-4">
-              <p class="font-mono text-lg text-accent">{metric.value}</p>
-              <p class="mt-1 text-xs text-muted-foreground">{metric.label}</p>
-            </div>
-          ))}
-        </div>
-      )
-    }
+    <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
+      {
+        metrics.map((metric) => (
+          <div class="rounded-lg border border-border p-4">
+            <p class="font-mono text-lg text-accent">{metric.value}</p>
+            <p class="mt-1 text-xs text-muted-foreground">{metric.label}</p>
+          </div>
+        ))
+      }
+    </div>
 
     {
       links && (links.repo || links.demo) && (
