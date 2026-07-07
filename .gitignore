@@ -18,6 +18,9 @@ pnpm-debug.log*
 .env
 .env.production
 
+# private source material (resume/CV/internal work-history packets) - never commit
+reference/
+
 # python bytecode
 __pycache__/
 *.pyc
