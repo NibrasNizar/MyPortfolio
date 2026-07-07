@@ -1,0 +1,127 @@
+---
+const navLinks = [
+  { href: '/experience', label: 'Experience' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/courses', label: 'Courses' },
+  { href: '/about', label: 'About' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <a
+      href="/"
+      class="font-mono text-sm font-medium tracking-tight text-foreground transition-colors hover:text-accent"
+    >
+      nibras<span class="text-accent">.</span>dev
+    </a>
+
+    <ul class="hidden items-center gap-8 md:flex">
+      {
+        navLinks.map((link) => {
+          const isActive =
+            currentPath === link.href || currentPath.startsWith(`${link.href}/`);
+          return (
+            <li>
+              <a
+                href={link.href}
+                class:list={[
+                  'text-sm transition-colors hover:text-accent',
+                  isActive ? 'text-accent' : 'text-muted-foreground',
+                ]}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <a
+        href="/resume.pdf"
+        download
+        class="hidden rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition-[color,border-color,transform] duration-200 ease-snappy hover:border-accent hover:text-accent active:scale-[0.97] active:duration-100 sm:inline-block"
+      >
+        Resume
+      </a>
+
+      <button
+        id="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="nav-mobile-menu"
+        class="inline-flex items-center justify-center rounded-md border border-border p-2 text-foreground transition-transform duration-100 ease-snappy active:scale-90 md:hidden"
+      >
+        <span class="sr-only">Toggle navigation menu</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div
+    id="nav-mobile-menu"
+    class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-snappy md:hidden"
+  >
+    <ul class="flex flex-col gap-1 overflow-hidden border-t border-border/60 px-6 py-3">
+      {
+        navLinks.map((link) => {
+          const isActive = currentPath === link.href || currentPath.startsWith(`${link.href}/`);
+          return (
+            <li>
+              <a
+                href={link.href}
+                class:list={[
+                  'block rounded-md px-2 py-2.5 text-sm transition-colors hover:bg-muted hover:text-accent',
+                  isActive ? 'text-accent' : 'text-muted-foreground',
+                ]}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          );
+        })
+      }
+      <li>
+        <a
+          href="/resume.pdf"
+          download
+          class="block rounded-md px-2 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-accent"
+        >
+          Resume
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('nav-toggle');
+  const menu = document.getElementById('nav-mobile-menu');
+
+  toggle?.addEventListener('click', () => {
+    const isOpen = menu?.classList.contains('grid-rows-[1fr]');
+    menu?.classList.toggle('grid-rows-[0fr]', isOpen);
+    menu?.classList.toggle('grid-rows-[1fr]', !isOpen);
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+  });
+</script>

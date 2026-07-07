@@ -1,0 +1,83 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import CourseCard from '../../components/CourseCard.astro';
+
+const courses = await getCollection('courses');
+
+const tracks = [
+  {
+    key: 'foundations',
+    label: 'Foundations',
+    description: 'Python, C++, and the DSA that actually shows up in ML infrastructure work.',
+  },
+  {
+    key: 'mlops',
+    label: 'MLOps Engineering',
+    description: 'Pipelines, containers, CI/CD, cloud serving, and the cost/observability discipline to run it all in production.',
+  },
+  {
+    key: 'genai',
+    label: 'AI / GenAI',
+    description: 'LLM fundamentals through production-grade agentic systems.',
+  },
+] as const;
+
+const coursesByTrack = tracks.map((track) => ({
+  ...track,
+  courses: courses.filter((c) => c.data.track === track.key).sort((a, b) => a.data.order - b.data.order),
+}));
+---
+
+<BaseLayout
+  title="Courses"
+  description="Path to Senior MLOps: a three-track curriculum from Python/C++/DSA foundations through MLOps engineering to production GenAI systems."
+>
+  <div class="mx-auto max-w-6xl px-6 py-16">
+    <SectionHeading
+      eyebrow="Path to Senior MLOps"
+      title="Learn the path, not just the syntax"
+      description="Three tracks, in order: Foundations → MLOps Engineering → AI/GenAI. Each course teaches the exact patterns used in the production case studies on this site."
+    />
+
+    <div class="mt-10 flex flex-wrap items-center gap-3">
+      {
+        tracks.map((track, i) => (
+          <>
+            <span class="rounded-full border border-accent/40 bg-accent/10 px-4 py-2 font-mono text-sm text-accent">
+              {track.label}
+            </span>
+            {i < tracks.length - 1 && (
+              <span class="text-muted-foreground" aria-hidden="true">
+                →
+              </span>
+            )}
+          </>
+        ))
+      }
+    </div>
+
+    <div class="mt-16 space-y-16">
+      {
+        coursesByTrack.map((track) => (
+          <div>
+            <h2 class="text-2xl font-semibold text-foreground">{track.label}</h2>
+            <p class="mt-2 max-w-2xl text-sm text-muted-foreground">{track.description}</p>
+
+            <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {track.courses.map((course) => (
+                <CourseCard
+                  href={`/courses/${course.id}`}
+                  title={course.data.title}
+                  summary={course.data.summary}
+                  status={course.data.status}
+                />
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>

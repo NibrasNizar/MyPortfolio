@@ -1,0 +1,53 @@
+---
+import { SITE } from '../consts';
+
+interface Props {
+  courseTitle: string;
+}
+
+const { courseTitle } = Astro.props;
+const hasButtondown = SITE.buttondownUsername.length > 0;
+---
+
+<div class="rounded-xl border border-border bg-primary/20 p-6">
+  <p class="font-mono text-sm text-accent">Notify me</p>
+  <h3 class="mt-1 text-lg font-semibold text-foreground">Get an email when this course launches</h3>
+  <p class="mt-2 text-sm text-muted-foreground">No spam, just a note when {courseTitle} is ready.</p>
+
+  {
+    hasButtondown ? (
+      <form
+        action={`https://buttondown.com/api/emails/embed-subscribe/${SITE.buttondownUsername}`}
+        method="post"
+        target="popupwindow"
+        onsubmit={`window.open('https://buttondown.com/${SITE.buttondownUsername}', 'popupwindow')`}
+        class="mt-4 flex flex-col gap-3 sm:flex-row"
+      >
+        <label class="sr-only" for={`email-${courseTitle}`}>
+          Email address
+        </label>
+        <input
+          id={`email-${courseTitle}`}
+          type="email"
+          name="email"
+          required
+          placeholder="you@example.com"
+          class="w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent"
+        />
+        <button
+          type="submit"
+          class="shrink-0 rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
+        >
+          Notify me
+        </button>
+      </form>
+    ) : (
+      <a
+        href={`mailto:${SITE.email}?subject=${encodeURIComponent(`Notify me: ${courseTitle}`)}`}
+        class="mt-4 inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
+      >
+        Email me when it's ready
+      </a>
+    )
+  }
+</div>

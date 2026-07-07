@@ -1,0 +1,71 @@
+---
+title: "Cross-Platform Data Export Pipeline"
+summary: "Designed an async, job-based replication pipeline that reliably unified 7,000+ defects and 21,000+ images across two separate analysis platforms."
+role: "Pipeline Designer & Engineer"
+timeframe: "2025 – 2026"
+tags: ["Data Engineering", "Platform"]
+stack: ["Python", "asyncio", "PostgreSQL", "ADLS", "KLARF Metadata"]
+order: 5
+metrics:
+  - label: "Defects migrated"
+    value: "7,000+"
+  - label: "Images migrated"
+    value: "21,000+"
+  - label: "Data sources supported"
+    value: "Lab + Field"
+---
+
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+
+## The problem
+
+Two separate defect-analysis platforms held overlapping but disconnected data — thousands of
+defect records and their associated images, split across systems with no reliable way to move
+between them. Manually reconciling that data doesn't scale, and a naive bulk copy risks
+partial failures silently corrupting the target system's state.
+
+**Constraints:**
+- The pipeline had to handle two structurally different input types — lab data and field
+  data — through one system, not two parallel ones.
+- Failures needed to be recoverable mid-run; a 21,000-image migration that dies at image
+  15,000 can't mean starting over from zero.
+- KLARF metadata (a semiconductor industry defect-data format) needed first-class support,
+  not a bolt-on parser.
+
+## Architecture
+
+<ArchitectureDiagram
+  caption="Three-table staging model with per-record status tracking makes partial failures recoverable instead of catastrophic."
+  nodes={[
+    { label: 'Source Platform', sublabel: 'Lab + field data, KLARF metadata' },
+    { label: 'Async Job Orchestration', sublabel: '3-table staging + status tracking' },
+    { label: 'Target Platform', sublabel: 'Unified defect + image store' },
+  ]}
+/>
+
+An async, job-based replication pipeline moves records through a three-table staging model:
+one table tracks source records, one tracks transformation/validation state, and one tracks
+final migration status per record. That per-record status tracking is what makes the
+pipeline safely resumable — a failure partway through a 21,000-image run only needs to
+re-process what didn't complete, not the whole batch.
+
+## Key decisions
+
+- **Three-table staging over a single migration log.** Splitting source tracking,
+  transformation state, and final status into separate tables made it possible to answer "what
+  exactly failed, and at which stage" per record — a single flat log would have made partial
+  failures much harder to diagnose and resume.
+- **Field-vs-lab data logic as a first-class branch, not a special case.** Rather than
+  bolting field-data handling onto a lab-data-shaped pipeline, both input types were designed
+  in from the start, including native KLARF metadata support — so one pipeline serves both
+  sources instead of maintaining two.
+- **Async job orchestration over synchronous batch scripts.** At 7,000+ defects and 21,000+
+  images, synchronous processing would have made the staging/status-tracking model far slower
+  to converge; async orchestration let independent records progress without blocking on each
+  other.
+
+## Outcome
+
+7,000+ defects and 21,000+ images migrated reliably between platforms, with a single pipeline
+now serving both lab and field data sources going forward instead of requiring
+source-specific tooling.

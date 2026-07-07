@@ -1,0 +1,177 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import MetricCounter from '../components/MetricCounter.astro';
+import TagBadge from '../components/TagBadge.astro';
+import AvailabilityBadge from '../components/AvailabilityBadge.astro';
+
+const featuredProjects = (await getCollection('projects'))
+  .filter((project) => project.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const skillGroups = [
+  {
+    label: 'Languages & Frameworks',
+    skills: ['Python', 'C++', 'SQL', 'TypeScript', 'FastAPI', 'React'],
+  },
+  {
+    label: 'ML & GenAI Orchestration',
+    skills: ['LangGraph', 'LangChain', 'MLflow 3.x', 'XGBoost', 'TensorFlow', 'PyTorch', 'RT-DETR', 'ONNX'],
+  },
+  {
+    label: 'MLOps & DevOps Infrastructure',
+    skills: ['Databricks', 'Docker', 'Kubernetes', 'Jenkins', 'Terraform', 'OpenShift (ARO)', 'AWS', 'Azure'],
+  },
+  {
+    label: 'Data & Quality',
+    skills: ['PostgreSQL', 'SonarQube', 'Bandit', 'Pytest', 'OAuth M2M'],
+  },
+];
+---
+
+<BaseLayout
+  title="Nibras Ahmed Nizar · MLOps Engineer, Agentic AI & GenAI Systems"
+  description="MLOps Engineer and Technical Lead building production agentic AI and ML platforms at enterprise scale: LangGraph agents serving 300+ users, serverless model serving, and 50% cloud-cost reduction."
+>
+  <!-- Hero -->
+  <section class="relative overflow-hidden border-b border-border/60">
+    <div
+      class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/15 via-background to-background"
+    >
+    </div>
+    <div class="relative mx-auto max-w-4xl px-6 py-24 text-center sm:py-32">
+      <div class="flex justify-center">
+        <AvailabilityBadge />
+      </div>
+
+      <h1 class="mt-6 text-4xl font-semibold tracking-tight text-foreground sm:text-6xl">
+        Nibras Ahmed Nizar
+      </h1>
+      <p class="mt-3 font-mono text-lg text-accent sm:text-xl">
+        MLOps Engineer · Agentic AI & GenAI Systems
+      </p>
+
+      <p class="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+        I take ML systems from notebook to production: a LangGraph agent serving{' '}
+        <span class="text-foreground">300+ users</span> at a semiconductor enterprise, and a
+        serverless migration that cut quarterly cloud spend by{' '}
+        <span class="text-foreground">50%</span>.
+      </p>
+      <p class="mx-auto mt-3 max-w-2xl font-mono text-sm text-muted-foreground">
+        Production agentic AI + MLOps at enterprise scale · Arabic-speaking · Gulf-market-ready
+      </p>
+
+      <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <a
+          href="/projects"
+          class="rounded-md bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
+        >
+          View work
+        </a>
+        <a
+          href="/courses"
+          class="rounded-md border border-border px-6 py-3 text-sm font-medium text-foreground transition-[color,border-color,transform] duration-200 ease-snappy hover:border-accent hover:text-accent active:scale-[0.97] active:duration-100"
+        >
+          Courses
+        </a>
+        <a
+          href="/resume.pdf"
+          download
+          class="rounded-md border border-border px-6 py-3 text-sm font-medium text-foreground transition-[color,border-color,transform] duration-200 ease-snappy hover:border-accent hover:text-accent active:scale-[0.97] active:duration-100"
+        >
+          Download resume
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metric strip -->
+  <section class="border-b border-border/60 bg-primary/10">
+    <div class="mx-auto max-w-6xl px-6 py-12">
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-3 lg:grid-cols-5">
+        <MetricCounter value={6} suffix="+" label="Years of experience" />
+        <MetricCounter value={300} suffix="+" label="Active agent users" />
+        <MetricCounter value={50} suffix="%" label="Cloud cost cut" />
+        <MetricCounter value={6} suffix="+" label="Production ML models" />
+        <MetricCounter value={1.8} prefix="₹" decimals={1} suffix="M" label="ISRO grant secured" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured projects -->
+  <section class="mx-auto max-w-6xl px-6 py-24">
+    <SectionHeading
+      eyebrow="Selected work"
+      title="Three ways I've moved the needle"
+      description="Agentic AI in production, a platform migration that changed the cost model, and the architecture call that halved a budget line. Full case studies: problem, architecture, decisions, outcome."
+    />
+
+    <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        featuredProjects.map((project) => (
+          <ProjectCard
+            href={`/projects/${project.id}`}
+            title={project.data.title}
+            summary={project.data.summary}
+            stack={project.data.stack}
+            headlineMetric={project.data.metrics[0]}
+          />
+        ))
+      }
+    </div>
+
+    <div class="mt-10 text-center">
+      <a href="/projects" class="font-mono text-sm text-accent hover:underline">
+        See all 7 projects →
+      </a>
+    </div>
+  </section>
+
+  <!-- Social proof -->
+  <section class="border-y border-border/60 bg-primary/10">
+    <div class="mx-auto max-w-6xl px-6 py-16">
+      <div class="grid gap-8 sm:grid-cols-3">
+        <div class="text-center sm:text-left">
+          <p class="font-mono text-sm text-accent">Recognition</p>
+          <p class="mt-2 text-sm text-muted-foreground">
+            2× Intel "Above & Beyond" awards: Results Driven (2023) & Customer First (2022)
+          </p>
+        </div>
+        <div class="text-center sm:text-left">
+          <p class="font-mono text-sm text-accent">Certified</p>
+          <p class="mt-2 text-sm text-muted-foreground">
+            AWS Certified Machine Learning – Specialty · MLOps Specialization, Duke University
+          </p>
+        </div>
+        <div class="text-center sm:text-left">
+          <p class="font-mono text-sm text-accent">Trusted by</p>
+          <p class="mt-2 text-sm text-muted-foreground">
+            Teams at Intel · Applied Materials (via UST) · ISRO-funded research
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="mx-auto max-w-6xl px-6 py-24">
+    <SectionHeading eyebrow="Toolbox" title="Skills, grouped by how I actually use them" />
+
+    <div class="mt-10 grid gap-8 sm:grid-cols-2">
+      {
+        skillGroups.map((group) => (
+          <div>
+            <p class="font-mono text-xs uppercase tracking-wide text-muted-foreground">{group.label}</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              {group.skills.map((skill) => (
+                <TagBadge label={skill} />
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

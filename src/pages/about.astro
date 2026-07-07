@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import AvailabilityBadge from '../components/AvailabilityBadge.astro';
+
+const certifications = [
+  { name: 'AWS Certified Machine Learning - Specialty', year: '2025' },
+  { name: 'MLOps Specialization, Duke University', year: '2025' },
+  { name: 'Google AI Essentials', year: '2025' },
+  { name: 'Introduction to Containers, Docker, Kubernetes & OpenShift, IBM', year: '2023' },
+];
+
+const awards = [
+  { name: 'ISRO "Respond Basket" Project Grant, ₹1,800,000', year: '2021-2022' },
+  { name: 'Intel "Above & Beyond" Institutional Winner', year: '2022, 2023' },
+];
+
+const languages = [
+  { name: 'English', level: 'Full professional fluency' },
+  { name: 'Arabic', level: 'Professional working proficiency. Works directly with Gulf clients in Arabic' },
+  { name: 'Hindi', level: 'Native' },
+];
+
+const personId = new URL('/#person', Astro.site).toString();
+const extraJsonLd = [
+  {
+    '@type': 'ProfilePage',
+    mainEntity: { '@id': personId },
+    url: new URL('/about', Astro.site).toString(),
+  },
+];
+---
+
+<BaseLayout
+  title="About"
+  description="Education, certifications, awards, languages, and engineering philosophy for Nibras Ahmed Nizar, MLOps Engineer and Technical Lead."
+  extraJsonLd={extraJsonLd}
+>
+  <div class="mx-auto max-w-3xl px-6 py-16">
+    <SectionHeading eyebrow="About" title="Nibras Ahmed Nizar" />
+
+    <div class="prose prose-invert prose-headings:font-semibold prose-a:text-accent mt-8 max-w-none">
+      <p>
+        I'm an MLOps Engineer and Technical Lead with six-plus years delivering production
+        AI/ML systems for global semiconductor enterprises, from classical ML in quality
+        assurance to leading the architecture of a chat-first agentic AI platform serving
+        hundreds of engineers. I own the full ML lifecycle: data ingestion, model serving,
+        CI/CD, and the agentic AI applications sitting on top of all of it.
+      </p>
+      <p>
+        I write strongly typed, well-documented Python: Google-style docstrings, async-first
+        I/O, and production observability built in from the start rather than bolted on after
+        an incident. I work to explicit quality gates: linting, security scanning, 80%+ test
+        coverage. I structure work as concrete artifacts (task boards, roadmaps, stakeholder
+        decks) and communicate on a predictable weekly cadence rather than an ad hoc one. I
+        surface trade-offs across options before committing to a direction, and I use AI
+        tooling pragmatically as a thought partner for both strategy and execution, which is
+        also why I ended up as my current team's internal AI-adoption champion.
+      </p>
+    </div>
+
+    <!-- Now / availability -->
+    <div class="mt-12 rounded-xl border border-accent/40 bg-accent/5 p-6">
+      <p class="font-mono text-xs uppercase tracking-wide text-accent">Now</p>
+      <div class="mt-3">
+        <AvailabilityBadge compact />
+      </div>
+      <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <dt class="text-xs text-muted-foreground">Current focus</dt>
+          <dd class="mt-1 text-sm text-foreground">
+            Leading agentic AI and MLOps platform delivery for a semiconductor enterprise client
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs text-muted-foreground">Open to</dt>
+          <dd class="mt-1 text-sm text-foreground">Senior MLOps / AI Platform / Technical Lead roles</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-muted-foreground">Location</dt>
+          <dd class="mt-1 text-sm text-foreground">Bengaluru, India. Middle East relocation-ready, remote-friendly</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-muted-foreground">Timezone</dt>
+          <dd class="mt-1 text-sm text-foreground">IST (UTC+5:30), regularly bridges PST/IST overlap</dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Education -->
+    <div class="mt-12">
+      <h2 class="text-xl font-semibold text-foreground">Education</h2>
+      <div class="mt-4 space-y-4">
+        <div>
+          <p class="font-medium text-foreground">Master of Technology (M.Tech), Software Engineering</p>
+          <p class="text-sm text-muted-foreground">Ramaiah Institute of Technology, Bengaluru · GPA 9.2/10 · 2022</p>
+        </div>
+        <div>
+          <p class="font-medium text-foreground">Bachelor of Engineering (B.E.), Computer Science & Engineering</p>
+          <p class="text-sm text-muted-foreground">Ramaiah Institute of Technology, Bengaluru · GPA 7.0/10 · 2020</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certifications -->
+    <div class="mt-12">
+      <h2 class="text-xl font-semibold text-foreground">Certifications</h2>
+      <ul class="mt-4 space-y-2">
+        {
+          certifications.map((cert) => (
+            <li class="flex items-baseline justify-between gap-4 text-sm">
+              <span class="text-foreground">{cert.name}</span>
+              <span class="shrink-0 font-mono text-xs text-muted-foreground">{cert.year}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Awards -->
+    <div class="mt-12">
+      <h2 class="text-xl font-semibold text-foreground">Awards</h2>
+      <ul class="mt-4 space-y-2">
+        {
+          awards.map((award) => (
+            <li class="flex items-baseline justify-between gap-4 text-sm">
+              <span class="text-foreground">{award.name}</span>
+              <span class="shrink-0 font-mono text-xs text-muted-foreground">{award.year}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Languages -->
+    <div class="mt-12">
+      <h2 class="text-xl font-semibold text-foreground">Languages</h2>
+      <ul class="mt-4 space-y-3">
+        {
+          languages.map((lang) => (
+            <li>
+              <span class="font-medium text-foreground">{lang.name}</span>
+              <span class="text-sm text-muted-foreground"> · {lang.level}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</BaseLayout>

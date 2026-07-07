@@ -1,0 +1,108 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../consts';
+import interLatinWoff2 from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import jetbrainsMonoLatinWoff2 from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
+
+interface Props {
+  title: string;
+  description: string;
+  extraJsonLd?: Record<string, unknown>[];
+}
+
+const { title, description, extraJsonLd = [] } = Astro.props;
+const siteName = SITE.name;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const ogRouteKey = Astro.url.pathname.replace(/^\/|\/$/g, '') || 'index';
+const ogImageURL = new URL(`/og/${ogRouteKey}.png`, Astro.site);
+
+const personId = new URL('/#person', Astro.site).toString();
+const websiteId = new URL('/#website', Astro.site).toString();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: SITE.name,
+      jobTitle: SITE.title,
+      email: `mailto:${SITE.email}`,
+      url: new URL('/', Astro.site).toString(),
+      sameAs: [SITE.linkedin, SITE.github],
+      knowsAbout: [
+        'MLOps',
+        'Agentic AI',
+        'LangGraph',
+        'GenAI',
+        'Databricks',
+        'MLflow',
+        'AWS',
+        'Kubernetes',
+        'Machine Learning',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': websiteId,
+      name: `${SITE.name} · ${SITE.title}`,
+      url: new URL('/', Astro.site).toString(),
+      author: { '@id': personId },
+    },
+    ...extraJsonLd,
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <link rel="preload" href={interLatinWoff2} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={jetbrainsMonoLatinWoff2} as="font" type="font/woff2" crossorigin />
+
+    <title>{title} · {siteName}</title>
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={`${title} · ${siteName}`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    {
+      SITE.goatcounterSite && (
+        <script
+          data-goatcounter={`https://${SITE.goatcounterSite}.goatcounter.com/count`}
+          async
+          src="//gc.zgo.at/count.js"
+        />
+      )
+    }
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-foreground"
+    >
+      Skip to content
+    </a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

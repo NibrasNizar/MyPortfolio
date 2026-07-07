@@ -1,0 +1,59 @@
+---
+interface Props {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  label: string;
+}
+
+const { value, prefix = '', suffix = '', decimals = 0, label } = Astro.props;
+---
+
+<div class="metric-counter text-center sm:text-left" data-value={value} data-decimals={decimals}>
+  <p class="font-mono text-3xl font-semibold text-foreground sm:text-4xl">
+    <span>{prefix}</span><span class="metric-number">{value.toFixed(decimals)}</span><span>{suffix}</span>
+  </p>
+  <p class="mt-1 text-sm text-muted-foreground">{label}</p>
+</div>
+
+<script>
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const counters = document.querySelectorAll<HTMLElement>('.metric-counter');
+
+  if (!prefersReducedMotion) {
+    const animate = (el: HTMLElement) => {
+      const target = parseFloat(el.dataset.value ?? '0');
+      const decimals = parseInt(el.dataset.decimals ?? '0', 10);
+      const numberEl = el.querySelector<HTMLElement>('.metric-number');
+      if (!numberEl) return;
+
+      const duration = 1200;
+      const start = performance.now();
+
+      const step = (now: number) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        numberEl.textContent = (target * eased).toFixed(decimals);
+        if (progress < 1) requestAnimationFrame(step);
+      };
+
+      requestAnimationFrame(step);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            animate(entry.target as HTMLElement);
+            obs.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    counters.forEach((counter) => observer.observe(counter));
+  }
+</script>

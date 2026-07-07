@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import TagBadge from '../../components/TagBadge.astro';
+
+const posts = (await getCollection('writing', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const formatter = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout
+  title="Writing"
+  description="Technical writing on production MLOps and agentic AI: the reasoning behind the case studies, not just the results."
+>
+  <div class="mx-auto max-w-3xl px-6 py-16">
+    <SectionHeading
+      eyebrow="Writing"
+      title="Notes from production"
+      description="Longer-form write-ups on the decisions behind the case studies: what worked, what didn't, and why."
+    />
+
+    {
+      posts.length === 0 ? (
+        <p class="mt-12 text-sm text-muted-foreground">
+          Nothing published yet, the first posts are in progress. In the meantime,{' '}
+          <a href="/projects" class="text-accent hover:underline">
+            the case studies
+          </a>{' '}
+          cover the same ground in depth.
+        </p>
+      ) : (
+        <div class="mt-12 space-y-8">
+          {posts.map((post) => (
+            <a href={`/writing/${post.id}`} class="group block">
+              <time datetime={post.data.pubDate.toISOString()} class="font-mono text-xs text-muted-foreground">
+                {formatter.format(post.data.pubDate)}
+              </time>
+              <h2 class="mt-1 text-xl font-semibold text-foreground group-hover:text-accent">{post.data.title}</h2>
+              <p class="mt-2 text-sm text-muted-foreground">{post.data.description}</p>
+              <div class="mt-3 flex flex-wrap gap-2">
+                {post.data.tags.map((tag) => (
+                  <TagBadge label={tag} />
+                ))}
+              </div>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

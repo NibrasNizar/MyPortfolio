@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nibras.dev/sitemap-index.xml
