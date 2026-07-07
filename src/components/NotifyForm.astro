@@ -32,11 +32,11 @@ const hasButtondown = SITE.buttondownUsername.length > 0;
           name="email"
           required
           placeholder="you@example.com"
-          class="w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent"
+          class="w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent"
         />
         <button
           type="submit"
-          class="shrink-0 rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-transform hover:-translate-y-0.5"
+          class="shrink-0 rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
         >
           Notify me
         </button>
@@ -44,7 +44,7 @@ const hasButtondown = SITE.buttondownUsername.length > 0;
     ) : (
       <a
         href={`mailto:${SITE.email}?subject=${encodeURIComponent(`Notify me: ${courseTitle}`)}`}
-        class="mt-4 inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-transform hover:-translate-y-0.5"
+        class="mt-4 inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
       >
         Email me when it's ready
       </a>

@@ -11,7 +11,7 @@ const { href, title, summary, status } = Astro.props;
 
 <a
   href={href}
-  class="group flex h-full flex-col justify-between rounded-xl border border-border bg-primary/20 p-6 transition-all hover:-translate-y-1 hover:border-accent"
+  class="group flex h-full flex-col justify-between rounded-xl border border-border bg-primary/20 p-6 transition-[transform,border-color] duration-200 ease-snappy hover:-translate-y-1 hover:border-accent active:scale-[0.98] active:duration-100"
 >
   <div>
     <div class="flex items-center justify-between gap-2">
@@ -33,7 +33,7 @@ const { href, title, summary, status } = Astro.props;
 
   <p class="mt-6 font-mono text-sm text-accent">
     View course
-    <span aria-hidden="true" class="inline-block transition-transform group-hover:translate-x-1">
+    <span aria-hidden="true" class="inline-block transition-transform duration-200 ease-snappy group-hover:translate-x-1">
       →
     </span>
   </p>
