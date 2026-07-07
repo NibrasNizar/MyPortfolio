@@ -35,21 +35,21 @@
 /* Light theme overrides. Default (no attribute, or [data-theme="dark"]) stays the
    dark tokens above -- dark is the committed brand identity, light is opt-in. */
 :root[data-theme="light"] {
-  --color-background: #f8fafc;
+  --color-background: #eaf1f8;
   --color-foreground: #0f172a;
-  --color-primary: #f1f5f9;
-  --color-secondary: #e2e8f0;
-  --color-accent: #0284c7;
+  --color-primary: #dbe7f2;
+  --color-secondary: #cde0ee;
+  --color-accent: #0369a1;
   --color-accent-foreground: #ffffff;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #475569;
-  --color-border: #cbd5e1;
+  --color-muted: #dde9f3;
+  --color-muted-foreground: #4b6178;
+  --color-border: #c1d5e6;
   --color-destructive: #dc2626;
-  --color-ring: #0284c7;
+  --color-ring: #0369a1;
 
-  --color-glass-surface: rgba(255, 255, 255, 0.55);
+  --color-glass-surface: rgba(234, 241, 248, 0.6);
   --color-glass-border: rgba(15, 23, 42, 0.1);
-  --color-glass-highlight: rgba(255, 255, 255, 0.7);
+  --color-glass-highlight: rgba(255, 255, 255, 0.75);
 }
 
 html {
