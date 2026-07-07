@@ -18,7 +18,7 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
       description="Each one follows the same shape: the problem and constraints, the architecture, the decisions that mattered, and what actually happened. No padding, this is every flagship project worth reading."
     />
 
-    <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="perspective mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {
         projects.map((project) => (
           <ProjectCard

@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from './ThemeToggle.astro';
+
 const navLinks = [
   { href: '/experience', label: 'Experience' },
   { href: '/projects', label: 'Projects' },
@@ -42,6 +44,8 @@ const currentPath = Astro.url.pathname;
     </ul>
 
     <div class="flex items-center gap-3">
+      <ThemeToggle />
+
       <a
         href="/resume.pdf"
         download

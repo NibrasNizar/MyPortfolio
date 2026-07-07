@@ -3,6 +3,11 @@
 @import "@fontsource-variable/jetbrains-mono";
 @plugin "@tailwindcss/typography";
 
+/* Our theme is runtime/JS-driven via [data-theme], not Tailwind's default
+   prefers-color-scheme or .dark class -- point the dark: variant at it so
+   dark:prose-invert (and any other dark: utility) tracks the actual theme. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
   --color-background: #0f172a;
   --color-foreground: #f8fafc;
@@ -16,15 +21,44 @@
   --color-destructive: #ef4444;
   --color-ring: #38bdf8;
 
+  /* Liquid Glass surfaces: adaptive per theme, see overrides below */
+  --color-glass-surface: rgba(255, 255, 255, 0.06);
+  --color-glass-border: rgba(255, 255, 255, 0.14);
+  --color-glass-highlight: rgba(255, 255, 255, 0.12);
+
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", monospace;
 
   --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
+/* Light theme overrides. Default (no attribute, or [data-theme="dark"]) stays the
+   dark tokens above -- dark is the committed brand identity, light is opt-in. */
+:root[data-theme="light"] {
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
+  --color-primary: #f1f5f9;
+  --color-secondary: #e2e8f0;
+  --color-accent: #0284c7;
+  --color-accent-foreground: #ffffff;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #475569;
+  --color-border: #cbd5e1;
+  --color-destructive: #dc2626;
+  --color-ring: #0284c7;
+
+  --color-glass-surface: rgba(255, 255, 255, 0.55);
+  --color-glass-border: rgba(15, 23, 42, 0.1);
+  --color-glass-highlight: rgba(255, 255, 255, 0.7);
+}
+
 html {
   color-scheme: dark;
   scroll-behavior: smooth;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -41,6 +75,15 @@ html {
   }
 }
 
+/* Smooth dark/light crossfade. Low specificity (universal selector) so any
+   component with its own more specific transition (buttons, .tilt-card, etc.)
+   correctly overrides this for the properties it already manages. */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-timing-function: ease;
+  transition-duration: 350ms;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
@@ -55,4 +98,44 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+/* Liquid Glass panel: frosted surface with an inner highlight, adaptive per theme. */
+.glass {
+  background-color: var(--color-glass-surface);
+  border: 1px solid var(--color-glass-border);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: inset 0 1px 0 var(--color-glass-highlight);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background-color: var(--color-primary);
+  }
+}
+
+.perspective {
+  perspective: 1200px;
+}
+
+.tilt-card {
+  transform-style: preserve-3d;
+  transition:
+    transform 400ms var(--ease-snappy),
+    border-color 300ms ease,
+    background-color 300ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tilt-card:hover {
+    transform: rotateX(4deg) rotateY(-6deg) translateY(-6px);
+  }
+}
+
+/* Source order matters: :active must follow :hover so press feedback wins
+   when both apply (mouse down while hovering), since specificity is equal. */
+.tilt-card:active {
+  transform: scale(0.98);
+  transition-duration: 100ms;
 }
