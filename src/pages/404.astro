@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/url';
 ---
 
 <BaseLayout title="Page not found" description="This page doesn't exist. Try the projects, courses, or about page instead.">
@@ -14,19 +15,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <div class="mt-8 flex flex-wrap justify-center gap-4">
       <a
-        href="/"
+        href={withBase('/')}
         class="rounded-md bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-transform hover:-translate-y-0.5"
       >
         Home
       </a>
       <a
-        href="/projects"
+        href={withBase('/projects')}
         class="rounded-md border border-border px-6 py-3 text-sm font-medium text-foreground transition-colors hover:border-accent hover:text-accent"
       >
         Projects
       </a>
       <a
-        href="/courses"
+        href={withBase('/courses')}
         class="rounded-md border border-border px-6 py-3 text-sm font-medium text-foreground transition-colors hover:border-accent hover:text-accent"
       >
         Courses

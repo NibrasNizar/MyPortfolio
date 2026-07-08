@@ -7,7 +7,7 @@ built with Astro, Tailwind CSS, and MDX content collections.
 
 ```text
 /
-├── public/                  # static assets, resume.pdf, favicons, robots.txt
+├── public/                  # static assets, resume.pdf, favicons
 ├── src/
 │   ├── components/          # shared UI (Nav, Footer, cards, MetricCounter, ...)
 │   ├── content/
@@ -39,29 +39,35 @@ built with Astro, Tailwind CSS, and MDX content collections.
 ## Deploying to GitHub Pages
 
 This repo is set up for GitHub Actions-based deployment (`withastro/action`), not the legacy
-"deploy from a branch" method. Two hosting styles are supported, and `astro.config.mjs` has
-both documented inline; **uncomment the one you're using**.
+"deploy from a branch" method.
 
-### Option A: custom domain or `<username>.github.io` (recommended)
+`site` and `base` in `astro.config.mjs` are read from the `SITE_URL` / `BASE_PATH` env vars
+(defaulting to `https://nibras.dev` with no base path if unset), so switching hosts is a
+one-line change in the workflow, not a code edit. Every internal link in the codebase goes
+through `src/lib/url.ts`'s `withBase()` helper (or, for links written in MDX content prose, a
+`rehype` plugin that rewrites them at render time) — so this stays correct automatically, no
+per-file changes needed when the hosting setup changes.
 
-Use this if you buy a custom domain (e.g. `nibras.dev`) or host at the root of
-`https://<username>.github.io`. No `base` path needed.
+### Current setup: GitHub Pages project site (no custom domain yet)
 
-1. In `astro.config.mjs`, set `site: 'https://nibras.dev'` (or your `github.io` URL).
-2. If using a custom domain, add a `public/CNAME` file containing just the domain
-   (e.g. `nibras.dev`) and configure the domain's DNS with your registrar per
+The site deploys to `https://nibrasnizar.github.io/MyPortfolio/`. `.github/workflows/deploy.yml`
+sets:
+
+```yaml
+SITE_URL: https://nibrasnizar.github.io
+BASE_PATH: /MyPortfolio
+```
+
+Nothing else to configure for this path — no CNAME, no DNS.
+
+### Switching to a custom domain later (e.g. nibras.dev)
+
+1. Buy the domain and point its DNS at GitHub Pages per
    [GitHub's custom domain docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site).
-3. In the repo's **Settings → Pages**, set the source to **GitHub Actions**.
-4. Push to `release/prod` (or run the workflow manually via **Actions → Deploy to GitHub
-   Pages → Run workflow**).
-
-### Option B: project repo without a custom domain
-
-If the site is served at `https://<username>.github.io/<repo-name>`:
-
-1. In `astro.config.mjs`, set `site: 'https://<username>.github.io'` and
-   `base: '/<repo-name>'`.
-2. Follow steps 3-4 above (no CNAME file needed).
+2. Add a `public/CNAME` file containing just the domain (e.g. `nibras.dev`).
+3. In `.github/workflows/deploy.yml`, set `SITE_URL: https://nibras.dev` and remove the
+   `BASE_PATH` line entirely (a custom domain always serves at the root).
+4. Re-run the deploy workflow.
 
 ### Enabling Pages
 

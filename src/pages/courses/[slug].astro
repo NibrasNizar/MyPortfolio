@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import NotifyForm from '../../components/NotifyForm.astro';
+import { withBase } from '../../lib/url';
 
 export async function getStaticPaths() {
   const courses = await getCollection('courses');
@@ -23,7 +24,7 @@ const trackLabels: Record<string, string> = {
 
 <BaseLayout title={course.data.title} description={course.data.summary}>
   <article class="mx-auto max-w-3xl px-6 py-16">
-    <a href="/courses" class="font-mono text-sm text-accent hover:underline">← All courses</a>
+    <a href={withBase('/courses')} class="font-mono text-sm text-accent hover:underline">← All courses</a>
 
     <div class="mt-4 flex flex-wrap items-center gap-3">
       <span class="rounded-full border border-border px-3 py-1 font-mono text-xs uppercase tracking-wide text-muted-foreground">

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/url';
 import SectionHeading from '../components/SectionHeading.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import MetricCounter from '../components/MetricCounter.astro';
@@ -160,19 +161,19 @@ const skillGroups = [
 
         <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
           <a
-            href="/projects"
+            href={withBase('/projects')}
             class="rounded-md bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
           >
             View work
           </a>
           <a
-            href="/courses"
+            href={withBase('/courses')}
             class="glass rounded-md px-6 py-3 text-sm font-medium text-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
           >
             Courses
           </a>
           <a
-            href="/resume.pdf"
+            href={withBase('/resume.pdf')}
             download
             class="glass rounded-md px-6 py-3 text-sm font-medium text-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
           >
@@ -226,7 +227,7 @@ const skillGroups = [
       {
         featuredProjects.map((project) => (
           <ProjectCard
-            href={`/projects/${project.id}`}
+            href={withBase(`/projects/${project.id}`)}
             title={project.data.title}
             summary={project.data.summary}
             stack={project.data.stack}
@@ -237,7 +238,7 @@ const skillGroups = [
     </div>
 
     <div class="mt-10 text-center">
-      <a href="/projects" class="-my-2.5 inline-block px-2 py-2.5 font-mono text-sm text-accent hover:underline">
+      <a href={withBase('/projects')} class="-my-2.5 inline-block px-2 py-2.5 font-mono text-sm text-accent hover:underline">
         See all 7 projects →
       </a>
     </div>
