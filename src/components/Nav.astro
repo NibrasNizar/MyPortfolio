@@ -1,23 +1,43 @@
 ---
-import ThemeToggle from './ThemeToggle.astro';
+import SettingsMenu from './SettingsMenu.astro';
 
 const navLinks = [
   { href: '/experience', label: 'Experience' },
   { href: '/projects', label: 'Projects' },
   { href: '/courses', label: 'Courses' },
+  { href: '/writing', label: 'Writing' },
   { href: '/about', label: 'About' },
 ];
 
 const currentPath = Astro.url.pathname;
+const isHome = currentPath === '/';
 ---
 
 <header class="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
   <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
     <a
       href="/"
-      class="font-mono text-sm font-medium tracking-tight text-foreground transition-colors hover:text-accent"
+      aria-current={isHome ? 'page' : undefined}
+      class:list={[
+        '-ml-2 flex items-center gap-2 rounded-md px-2 py-2.5 font-mono text-sm font-medium tracking-tight transition-colors hover:text-accent',
+        isHome ? 'text-accent' : 'text-foreground',
+      ]}
     >
-      nibras<span class="text-accent">.</span>dev
+      <svg
+        class="h-4 w-4"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span>nibras<span class="text-accent">.</span>dev</span>
     </a>
 
     <ul class="hidden items-center gap-8 md:flex">
@@ -44,7 +64,7 @@ const currentPath = Astro.url.pathname;
     </ul>
 
     <div class="flex items-center gap-3">
-      <ThemeToggle />
+      <SettingsMenu />
 
       <a
         href="/resume.pdf"
@@ -83,6 +103,7 @@ const currentPath = Astro.url.pathname;
 
   <div
     id="nav-mobile-menu"
+    inert
     class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-snappy md:hidden"
   >
     <ul class="flex flex-col gap-1 overflow-hidden border-t border-border/60 px-6 py-3">
@@ -122,10 +143,33 @@ const currentPath = Astro.url.pathname;
   const toggle = document.getElementById('nav-toggle');
   const menu = document.getElementById('nav-mobile-menu');
 
-  toggle?.addEventListener('click', () => {
-    const isOpen = menu?.classList.contains('grid-rows-[1fr]');
-    menu?.classList.toggle('grid-rows-[0fr]', isOpen);
-    menu?.classList.toggle('grid-rows-[1fr]', !isOpen);
-    toggle.setAttribute('aria-expanded', String(!isOpen));
+  const isOpen = () => toggle?.getAttribute('aria-expanded') === 'true';
+
+  const openMenu = () => {
+    menu?.removeAttribute('inert');
+    menu?.classList.remove('grid-rows-[0fr]');
+    menu?.classList.add('grid-rows-[1fr]');
+    toggle?.setAttribute('aria-expanded', 'true');
+  };
+
+  const closeMenu = (refocusToggle = false) => {
+    menu?.setAttribute('inert', '');
+    menu?.classList.remove('grid-rows-[1fr]');
+    menu?.classList.add('grid-rows-[0fr]');
+    toggle?.setAttribute('aria-expanded', 'false');
+    if (refocusToggle) toggle?.focus();
+  };
+
+  toggle?.addEventListener('click', () => (isOpen() ? closeMenu() : openMenu()));
+
+  document.addEventListener('click', (event) => {
+    if (!isOpen()) return;
+    const target = event.target as Node;
+    if (toggle?.contains(target) || menu?.contains(target)) return;
+    closeMenu();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isOpen()) closeMenu(true);
   });
 </script>

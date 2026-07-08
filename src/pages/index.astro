@@ -5,10 +5,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import MetricCounter from '../components/MetricCounter.astro';
-import TagBadge from '../components/TagBadge.astro';
 import AvailabilityBadge from '../components/AvailabilityBadge.astro';
+import SkillCloud from '../components/SkillCloud.astro';
 import heroDarkSrc from '../assets/hero-dark.jpg';
 import heroLightSrc from '../assets/hero-light.jpg';
+import {
+  siPython,
+  siCplusplus,
+  siTypescript,
+  siFastapi,
+  siReact,
+  siLanggraph,
+  siLangchain,
+  siMlflow,
+  siTensorflow,
+  siPytorch,
+  siOnnx,
+  siDatabricks,
+  siDocker,
+  siKubernetes,
+  siJenkins,
+  siTerraform,
+  siRedhatopenshift,
+  siPostgresql,
+  siPytest,
+  siSonarqubeserver,
+} from 'simple-icons';
 
 const featuredProjects = (await getCollection('projects'))
   .filter((project) => project.data.featured)
@@ -29,24 +51,57 @@ async function buildResponsiveHero(src: typeof heroDarkSrc) {
 const heroDark = await buildResponsiveHero(heroDarkSrc);
 const heroLight = await buildResponsiveHero(heroLightSrc);
 
+// Tier drives size in the skill cloud: lg = heaviest day-to-day use, sm = narrower/occasional use.
+// Icon-less entries (no matching simple-icons logo) fall back to a plain text chip at the same tier size.
 const skillGroups = [
   {
     label: 'Languages & Frameworks',
-    skills: ['Python', 'C++', 'SQL', 'TypeScript', 'FastAPI', 'React'],
+    skills: [
+      { name: 'Python', icon: siPython, tier: 'lg' },
+      { name: 'TypeScript', icon: siTypescript, tier: 'md' },
+      { name: 'C++', icon: siCplusplus, tier: 'md' },
+      { name: 'SQL', tier: 'md' },
+      { name: 'FastAPI', icon: siFastapi, tier: 'md' },
+      { name: 'React', icon: siReact, tier: 'sm' },
+    ],
   },
   {
     label: 'ML & GenAI Orchestration',
-    skills: ['LangGraph', 'LangChain', 'MLflow 3.x', 'XGBoost', 'TensorFlow', 'PyTorch', 'RT-DETR', 'ONNX'],
+    skills: [
+      { name: 'LangGraph', icon: siLanggraph, tier: 'lg' },
+      { name: 'MLflow 3.x', icon: siMlflow, tier: 'lg' },
+      { name: 'LangChain', icon: siLangchain, tier: 'md' },
+      { name: 'TensorFlow', icon: siTensorflow, tier: 'md' },
+      { name: 'PyTorch', icon: siPytorch, tier: 'md' },
+      { name: 'XGBoost', tier: 'md' },
+      { name: 'ONNX', icon: siOnnx, tier: 'sm' },
+      { name: 'RT-DETR', tier: 'sm' },
+    ],
   },
   {
     label: 'MLOps & DevOps Infrastructure',
-    skills: ['Databricks', 'Docker', 'Kubernetes', 'Jenkins', 'Terraform', 'OpenShift (ARO)', 'AWS', 'Azure'],
+    skills: [
+      { name: 'Databricks', icon: siDatabricks, tier: 'lg' },
+      { name: 'Docker', icon: siDocker, tier: 'lg' },
+      { name: 'Kubernetes', icon: siKubernetes, tier: 'lg' },
+      { name: 'AWS', tier: 'lg' },
+      { name: 'Jenkins', icon: siJenkins, tier: 'md' },
+      { name: 'Terraform', icon: siTerraform, tier: 'md' },
+      { name: 'Azure', tier: 'md' },
+      { name: 'OpenShift (ARO)', icon: siRedhatopenshift, tier: 'sm' },
+    ],
   },
   {
     label: 'Data & Quality',
-    skills: ['PostgreSQL', 'SonarQube', 'Bandit', 'Pytest', 'OAuth M2M'],
+    skills: [
+      { name: 'PostgreSQL', icon: siPostgresql, tier: 'md' },
+      { name: 'Pytest', icon: siPytest, tier: 'md' },
+      { name: 'SonarQube', icon: siSonarqubeserver, tier: 'sm' },
+      { name: 'Bandit', tier: 'sm' },
+      { name: 'OAuth M2M', tier: 'sm' },
+    ],
   },
-];
+] as const;
 ---
 
 <BaseLayout
@@ -62,7 +117,7 @@ const skillGroups = [
       sizes="100vw"
       alt=""
       fetchpriority="high"
-      class="absolute inset-0 h-full w-full object-cover object-[43%_52%] opacity-100 brightness-150 saturate-125 transition-opacity duration-700 ease-snappy"
+      class="absolute inset-0 h-full w-full scale-110 object-cover object-[43%_52%] opacity-100 brightness-150 saturate-125 blur-md transition-opacity duration-700 ease-snappy"
     />
     <img
       id="hero-img-light"
@@ -71,57 +126,59 @@ const skillGroups = [
       sizes="100vw"
       alt=""
       loading="lazy"
-      class="absolute inset-0 h-full w-full object-cover object-[47%_37%] opacity-0 transition-opacity duration-700 ease-snappy"
+      class="absolute inset-0 h-full w-full scale-110 object-cover object-[47%_37%] opacity-0 blur-md transition-opacity duration-700 ease-snappy"
     />
     <div
-      class="absolute inset-0 bg-gradient-to-b from-background/30 via-background/45 to-background"
+      class="absolute inset-0 bg-gradient-to-b from-background/30 via-background/45 to-background dark:from-background/55 dark:via-background/70"
     >
     </div>
 
-    <div class="relative mx-auto max-w-4xl px-6 py-24 text-center sm:py-32">
-      <div class="flex justify-center">
-        <AvailabilityBadge glass />
-      </div>
+    <div class="relative mx-auto max-w-4xl px-6 py-24 sm:py-32">
+      <div class="glass-panel mx-auto max-w-3xl rounded-[2.5rem] px-8 py-12 text-center sm:px-14 sm:py-16">
+        <div class="flex justify-center">
+          <AvailabilityBadge glass />
+        </div>
 
-      <h1
-        class="mt-6 text-4xl font-semibold tracking-tight text-foreground [text-shadow:0_2px_24px_rgb(0_0_0_/_0.25)] sm:text-6xl"
-      >
-        Nibras Ahmed Nizar
-      </h1>
-      <p class="mt-3 font-mono text-lg text-accent sm:text-xl">
-        MLOps Engineer · Agentic AI & GenAI Systems
-      </p>
+        <h1
+          class="mt-6 text-4xl font-semibold tracking-tight text-foreground [text-shadow:0_0_1px_rgb(255_255_255_/_1),0_0_4px_rgb(255_255_255_/_0.9),0_1px_18px_rgb(255_255_255_/_0.7)] sm:text-6xl dark:[text-shadow:0_2px_24px_rgb(0_0_0_/_0.25)]"
+        >
+          Nibras Ahmed Nizar
+        </h1>
+        <p class="glass mt-3 inline-block rounded-full px-4 py-1.5 font-mono text-lg text-accent [text-shadow:0_0_2px_rgb(255_255_255_/_1),0_1px_10px_rgb(255_255_255_/_0.85)] sm:text-xl dark:[text-shadow:0_0_2px_rgb(0_0_0_/_0.9),0_1px_4px_rgb(0_0_0_/_0.85),0_1px_14px_rgb(0_0_0_/_0.7)]">
+          MLOps Engineer · Agentic AI & GenAI Systems
+        </p>
 
-      <p class="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-        I take ML systems from notebook to production: a LangGraph agent serving{' '}
-        <span class="text-foreground">300+ users</span> at a semiconductor enterprise, and a
-        serverless migration that cut quarterly cloud spend by{' '}
-        <span class="text-foreground">50%</span>.
-      </p>
-      <p class="mx-auto mt-3 max-w-2xl font-mono text-sm text-muted-foreground">
-        Production agentic AI + MLOps at enterprise scale · Arabic-speaking · Gulf-market-ready
-      </p>
+        <p class="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground [text-shadow:0_0_1px_rgb(255_255_255_/_1),0_0_3px_rgb(255_255_255_/_0.95),0_1px_6px_rgb(255_255_255_/_0.9),0_1px_16px_rgb(255_255_255_/_0.8)] dark:[text-shadow:0_0_2px_rgb(0_0_0_/_0.9),0_1px_4px_rgb(0_0_0_/_0.85),0_1px_18px_rgb(0_0_0_/_0.75)]">
+          I take ML systems from notebook to production: a LangGraph agent serving{' '}
+          <span class="text-foreground dark:[text-shadow:0_0_2px_rgb(0_0_0_/_1),0_1px_5px_rgb(0_0_0_/_0.95),0_1px_20px_rgb(0_0_0_/_0.85)]">300+ users</span> at a semiconductor enterprise, and a
+          serverless migration that cut quarterly cloud spend by{' '}
+          <span class="text-foreground dark:[text-shadow:0_0_2px_rgb(0_0_0_/_1),0_1px_5px_rgb(0_0_0_/_0.95),0_1px_20px_rgb(0_0_0_/_0.85)]">50%</span>.
+        </p>
+        <p class="mx-auto mt-3 max-w-2xl font-mono text-sm text-muted-foreground [text-shadow:0_0_1px_rgb(255_255_255_/_1),0_0_3px_rgb(255_255_255_/_0.95),0_1px_6px_rgb(255_255_255_/_0.9),0_1px_16px_rgb(255_255_255_/_0.8)] dark:[text-shadow:0_0_2px_rgb(0_0_0_/_0.9),0_1px_4px_rgb(0_0_0_/_0.85),0_1px_18px_rgb(0_0_0_/_0.75)]">
+          Production agentic AI + MLOps at enterprise scale · Arabic-speaking · Gulf-market-ready
+        </p>
 
-      <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
-        <a
-          href="/projects"
-          class="rounded-md bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
-        >
-          View work
-        </a>
-        <a
-          href="/courses"
-          class="glass rounded-md px-6 py-3 text-sm font-medium text-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
-        >
-          Courses
-        </a>
-        <a
-          href="/resume.pdf"
-          download
-          class="glass rounded-md px-6 py-3 text-sm font-medium text-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
-        >
-          Download resume
-        </a>
+        <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <a
+            href="/projects"
+            class="rounded-md bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
+          >
+            View work
+          </a>
+          <a
+            href="/courses"
+            class="glass rounded-md px-6 py-3 text-sm font-medium text-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
+          >
+            Courses
+          </a>
+          <a
+            href="/resume.pdf"
+            download
+            class="glass rounded-md px-6 py-3 text-sm font-medium text-foreground transition-transform duration-200 ease-snappy hover:-translate-y-0.5 active:scale-[0.97] active:duration-100"
+          >
+            Download resume
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -165,7 +222,7 @@ const skillGroups = [
       description="Agentic AI in production, a platform migration that changed the cost model, and the architecture call that halved a budget line. Full case studies: problem, architecture, decisions, outcome."
     />
 
-    <div class="perspective mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {
         featuredProjects.map((project) => (
           <ProjectCard
@@ -216,19 +273,6 @@ const skillGroups = [
   <section class="mx-auto max-w-6xl px-6 py-24">
     <SectionHeading eyebrow="Toolbox" title="Skills, grouped by how I actually use them" />
 
-    <div class="mt-10 grid gap-8 sm:grid-cols-2">
-      {
-        skillGroups.map((group) => (
-          <div>
-            <p class="font-mono text-xs uppercase tracking-wide text-muted-foreground">{group.label}</p>
-            <div class="mt-3 flex flex-wrap gap-2">
-              {group.skills.map((skill) => (
-                <TagBadge label={skill} />
-              ))}
-            </div>
-          </div>
-        ))
-      }
-    </div>
+    <SkillCloud groups={skillGroups} />
   </section>
 </BaseLayout>

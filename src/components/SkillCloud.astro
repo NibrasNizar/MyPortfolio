@@ -1,0 +1,245 @@
+---
+interface SkillIcon {
+  path: string;
+  hex: string;
+  title: string;
+}
+
+interface Skill {
+  name: string;
+  icon?: SkillIcon;
+  tier: 'lg' | 'md' | 'sm';
+}
+
+interface Props {
+  groups: { label: string; skills: Skill[] }[];
+}
+
+const { groups } = Astro.props;
+
+// Box footprint per tier, in logical units. Icons are square (source SVGs are 24x24);
+// text-fallback items reuse the same tier height but size their own width from label length.
+const ICON_BOX = { lg: 96, md: 56, sm: 32 } as const;
+const TEXT_BOX = { lg: { h: 50, font: 26, charW: 17 }, md: { h: 32, font: 16, charW: 11 }, sm: { h: 24, font: 12, charW: 8 } } as const;
+
+// Skills with no matching logo in simple-icons get a solid colored pill instead of bare text,
+// so they still read as "a logo" in the collage rather than a stray label. AWS/Azure use their
+// real brand colors (neither ships an SVG in simple-icons); the rest get a curated fallback hue.
+const FALLBACK_COLOR: Record<string, string> = {
+  AWS: '#FF9900',
+  Azure: '#0078D4',
+  SQL: '#4A90D9',
+  XGBoost: '#EC6E4C',
+  'RT-DETR': '#7C5CFC',
+  Bandit: '#E63950',
+  'OAuth M2M': '#2FA37D',
+};
+
+function footprint(skill: Skill) {
+  if (skill.icon) {
+    const s = ICON_BOX[skill.tier];
+    return { w: s, h: s };
+  }
+  const t = TEXT_BOX[skill.tier];
+  return { w: Math.max(skill.name.length * t.charW + t.h * 0.9, t.h * 1.9), h: t.h, font: t.font };
+}
+
+// Cloud silhouette, authored as a union of overlapping circles (the classic way to draw a
+// puffy cloud) in normalized units centered near the origin. The same circle set is used to
+// (a) constrain where logos may be placed and (b) render the visible outline behind them, so
+// the two can never drift out of sync.
+const CLOUD_TEMPLATE = [
+  { cx: -108, cy: 6, r: 30 },
+  { cx: -68, cy: 20, r: 44 },
+  { cx: -14, cy: 26, r: 50 },
+  { cx: 42, cy: 18, r: 46 },
+  { cx: 86, cy: 4, r: 32 },
+  { cx: -50, cy: -24, r: 34 },
+  { cx: 2, cy: -34, r: 38 },
+  { cx: 50, cy: -24, r: 32 },
+] as const;
+
+function templateBBox() {
+  const minX = Math.min(...CLOUD_TEMPLATE.map((c) => c.cx - c.r));
+  const maxX = Math.max(...CLOUD_TEMPLATE.map((c) => c.cx + c.r));
+  const minY = Math.min(...CLOUD_TEMPLATE.map((c) => c.cy - c.r));
+  const maxY = Math.max(...CLOUD_TEMPLATE.map((c) => c.cy + c.r));
+  return { minX, maxX, minY, maxY, w: maxX - minX, h: maxY - minY };
+}
+
+// Union area of the template, estimated by grid sampling (cheap, build-time only) -- used to
+// pick a scale factor so each category's cloud is just big enough to hold its items.
+function templateUnionArea() {
+  const bbox = templateBBox();
+  const RES = 140;
+  let inside = 0;
+  for (let i = 0; i < RES; i++) {
+    for (let j = 0; j < RES; j++) {
+      const x = bbox.minX + (bbox.w * (i + 0.5)) / RES;
+      const y = bbox.minY + (bbox.h * (j + 0.5)) / RES;
+      if (CLOUD_TEMPLATE.some((c) => (x - c.cx) ** 2 + (y - c.cy) ** 2 <= c.r ** 2)) inside++;
+    }
+  }
+  return (inside / (RES * RES)) * bbox.w * bbox.h;
+}
+const TEMPLATE_UNION_AREA = templateUnionArea();
+const TEMPLATE_BBOX = templateBBox();
+
+function buildCluster(group: { label: string; skills: Skill[] }) {
+  const withFootprint = group.skills.map((skill) => ({ skill, ...footprint(skill) }));
+  const totalItemArea = withFootprint.reduce((sum, i) => sum + i.w * i.h, 0);
+  const FILL_RATIO = 0.4; // cloud silhouette is less area-efficient than a bare rectangle
+  const OVERLAP_ALLOW = 1.08; // items pack edge-to-edge with a small clean gap, never overlapping
+  const EDGE_INSET = 0.93; // keep items a little clear of the cloud's own edge
+
+  // Order largest-first so big logos anchor the center; smaller ones fill the remaining gaps.
+  const order = [...withFootprint].sort((a, b) => b.w * b.h - a.w * a.h);
+
+  let scale = Math.sqrt((totalItemArea / FILL_RATIO) / TEMPLATE_UNION_AREA);
+  let placed: { key: string; w: number; h: number; x: number; y: number }[] = [];
+
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const circles = CLOUD_TEMPLATE.map((c) => ({ cx: c.cx * scale, cy: c.cy * scale, r: c.r * scale * EDGE_INSET }));
+    const insideShape = (cx: number, cy: number, w: number, h: number) => {
+      const corners = [
+        [cx - w / 2, cy - h / 2],
+        [cx + w / 2, cy - h / 2],
+        [cx - w / 2, cy + h / 2],
+        [cx + w / 2, cy + h / 2],
+      ];
+      return corners.every(([x, y]) => circles.some((c) => (x - c.cx) ** 2 + (y - c.cy) ** 2 <= c.r ** 2));
+    };
+
+    const attemptPlaced: typeof placed = [];
+    const collides = (cx: number, cy: number, w: number, h: number) => {
+      const hw = (w * OVERLAP_ALLOW) / 2;
+      const hh = (h * OVERLAP_ALLOW) / 2;
+      return attemptPlaced.some((p) => {
+        const phw = (p.w * OVERLAP_ALLOW) / 2;
+        const phh = (p.h * OVERLAP_ALLOW) / 2;
+        return Math.abs(cx - p.x) < hw + phw && Math.abs(cy - p.y) < hh + phh;
+      });
+    };
+
+    let allPlaced = true;
+    for (const item of order) {
+      let angle = 0;
+      let radius = 0;
+      let cx = 0;
+      let cy = 0;
+      let found = false;
+      for (let tries = 0; tries < 2500; tries++) {
+        cx = radius * Math.cos(angle);
+        cy = radius * Math.sin(angle);
+        if (insideShape(cx, cy, item.w, item.h) && !collides(cx, cy, item.w, item.h)) {
+          found = true;
+          break;
+        }
+        angle += 0.34;
+        radius += 1.15;
+      }
+      attemptPlaced.push({ key: item.skill.name, w: item.w, h: item.h, x: cx, y: cy });
+      if (!found) allPlaced = false;
+    }
+
+    placed = attemptPlaced;
+    if (allPlaced) break;
+    scale *= 1.09; // cloud was too small to fit everything cleanly -- grow and retry
+  }
+
+  const finalCircles = CLOUD_TEMPLATE.map((c) => ({ cx: c.cx * scale, cy: c.cy * scale, r: c.r * scale }));
+  const minX = Math.min(...finalCircles.map((c) => c.cx - c.r));
+  const maxX = Math.max(...finalCircles.map((c) => c.cx + c.r));
+  const minY = Math.min(...finalCircles.map((c) => c.cy - c.r));
+  const maxY = Math.max(...finalCircles.map((c) => c.cy + c.r));
+  const pad = 6;
+  const canvasW = maxX - minX + pad * 2;
+  const canvasH = maxY - minY + pad * 2;
+  const shift = (v: number, min: number) => v - min + pad;
+
+  const outlineCircles = finalCircles.map((c) => ({
+    cx: shift(c.cx, minX),
+    cy: shift(c.cy, minY),
+    r: c.r,
+  }));
+
+  const items = withFootprint.map(({ skill, w, h, font }) => {
+    const p = placed.find((pl) => pl.key === skill.name)!;
+    const left = ((shift(p.x, minX) - w / 2) / canvasW) * 100;
+    const top = ((shift(p.y, minY) - h / 2) / canvasH) * 100;
+    const width = (w / canvasW) * 100;
+    const height = (h / canvasH) * 100;
+    const fontCqw = font ? (font / canvasW) * 100 : undefined;
+    return { skill, left, top, width, height, fontCqw };
+  });
+
+  return { label: group.label, canvasW, canvasH, outlineCircles, items };
+}
+
+const clusters = groups.map(buildCluster);
+---
+
+<div class="mt-10 grid gap-x-12 gap-y-16 sm:grid-cols-2">
+  {
+    clusters.map((cluster) => (
+      <div>
+        <p class="font-mono text-xs uppercase tracking-wide text-muted-foreground">{cluster.label}</p>
+        <div
+          class="relative mt-4 w-full [container-type:inline-size]"
+          style={`aspect-ratio: ${cluster.canvasW} / ${cluster.canvasH};`}
+        >
+          <svg
+            class="absolute inset-0 h-full w-full [filter:drop-shadow(0_8px_20px_rgb(0_0_0_/_0.12))]"
+            viewBox={`0 0 ${cluster.canvasW} ${cluster.canvasH}`}
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            {/* opacity on the <g> (not a per-shape fill-opacity) composites the whole silhouette
+                as one flattened layer first, so overlapping circles blend into a single smooth
+                cloud instead of visibly double-darkening where they meet. */}
+            <g class="fill-primary" opacity="0.55">
+              {cluster.outlineCircles.map((c) => (
+                <circle cx={c.cx} cy={c.cy} r={c.r} />
+              ))}
+            </g>
+          </svg>
+
+          {cluster.items.map(({ skill, left, top, width, height, fontCqw }) => {
+            const fallbackColor = skill.icon ? null : FALLBACK_COLOR[skill.name] ?? '#64748B';
+            return (
+              <div class="group absolute" style={`left:${left}%; top:${top}%; width:${width}%; height:${height}%;`}>
+                <span
+                  class="pointer-events-none absolute inset-[-35%] scale-75 rounded-full bg-background opacity-0 blur-[3px] transition-[opacity,transform] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:scale-100 group-hover:opacity-90"
+                  aria-hidden="true"
+                />
+                {skill.icon ? (
+                  <>
+                    <svg
+                      class="relative h-full w-full opacity-90 transition-[transform,opacity] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:z-20 group-hover:scale-[1.14] group-hover:opacity-100"
+                      style={`color:#${skill.icon.hex};`}
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d={skill.icon.path} />
+                    </svg>
+                    <span class="pointer-events-none absolute left-1/2 top-full z-30 mt-1.5 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-md bg-foreground px-2 py-1 font-mono text-xs text-background opacity-0 transition-[opacity,transform] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:translate-y-0 group-hover:opacity-100">
+                      {skill.name}
+                    </span>
+                  </>
+                ) : (
+                  <span
+                    class="relative flex h-full w-full items-center justify-center rounded-lg px-1 text-center font-mono font-bold text-white shadow-sm transition-[transform] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] group-hover:z-20 group-hover:scale-[1.1]"
+                    style={`background-color:${fallbackColor}; font-size: ${fontCqw}cqw;`}
+                  >
+                    {skill.name}
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    ))
+  }
+</div>
