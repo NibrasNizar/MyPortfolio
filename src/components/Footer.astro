@@ -1,5 +1,6 @@
 ---
 import { SITE } from '../consts';
+import { withBase } from '../lib/url';
 
 const year = new Date().getFullYear();
 ---
@@ -41,7 +42,7 @@ const year = new Date().getFullYear();
         >
           GitHub
         </a>
-        <a href="/rss.xml" class="-mx-1.5 inline-block px-1.5 py-2.5 transition-colors hover:text-accent">RSS</a>
+        <a href={withBase('/rss.xml')} class="-mx-1.5 inline-block px-1.5 py-2.5 transition-colors hover:text-accent">RSS</a>
       </div>
     </div>
   </div>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import TagBadge from '../components/TagBadge.astro';
+import { withBase } from '../lib/url';
 
 interface Props {
   title: string;
@@ -17,7 +18,7 @@ const { title, summary, role, timeframe, stack, metrics, links } = Astro.props;
 
 <BaseLayout title={title} description={summary}>
   <article class="mx-auto max-w-3xl px-6 py-16">
-    <a href="/projects" class="font-mono text-sm text-accent hover:underline">← All projects</a>
+    <a href={withBase('/projects')} class="font-mono text-sm text-accent hover:underline">← All projects</a>
 
     <h1 class="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{title}</h1>
     <p class="mt-4 text-lg text-muted-foreground">{summary}</p>

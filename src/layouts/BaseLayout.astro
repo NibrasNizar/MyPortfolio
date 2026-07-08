@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { SITE } from '../consts';
+import { withBase } from '../lib/url';
 import interLatinWoff2 from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import jetbrainsMonoLatinWoff2 from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 
@@ -17,10 +18,11 @@ const siteName = SITE.name;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const ogRouteKey = Astro.url.pathname.replace(/^\/|\/$/g, '') || 'index';
-const ogImageURL = new URL(`/og/${ogRouteKey}.png`, Astro.site);
+const ogImageURL = new URL(withBase(`/og/${ogRouteKey}.png`), Astro.site);
 
-const personId = new URL('/#person', Astro.site).toString();
-const websiteId = new URL('/#website', Astro.site).toString();
+const personId = new URL(withBase('/#person'), Astro.site).toString();
+const websiteId = new URL(withBase('/#website'), Astro.site).toString();
+const homeURL = new URL(withBase('/'), Astro.site).toString();
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -31,7 +33,7 @@ const jsonLd = {
       name: SITE.name,
       jobTitle: SITE.title,
       email: `mailto:${SITE.email}`,
-      url: new URL('/', Astro.site).toString(),
+      url: homeURL,
       sameAs: [SITE.linkedin, SITE.github],
       knowsAbout: [
         'MLOps',
@@ -49,7 +51,7 @@ const jsonLd = {
       '@type': 'WebSite',
       '@id': websiteId,
       name: `${SITE.name} · ${SITE.title}`,
-      url: new URL('/', Astro.site).toString(),
+      url: homeURL,
       author: { '@id': personId },
     },
     ...extraJsonLd,
@@ -69,7 +71,7 @@ const jsonLd = {
         document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
     <link rel="canonical" href={canonicalURL} />
 
     <link rel="preload" href={interLatinWoff2} as="font" type="font/woff2" crossorigin />

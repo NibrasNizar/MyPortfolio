@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import AvailabilityBadge from '../components/AvailabilityBadge.astro';
+import { withBase } from '../lib/url';
 
 const certifications = [
   { name: 'AWS Certified Machine Learning - Specialty', year: '2025' },
@@ -21,12 +22,12 @@ const languages = [
   { name: 'Hindi', level: 'Native' },
 ];
 
-const personId = new URL('/#person', Astro.site).toString();
+const personId = new URL(withBase('/#person'), Astro.site).toString();
 const extraJsonLd = [
   {
     '@type': 'ProfilePage',
     mainEntity: { '@id': personId },
-    url: new URL('/about', Astro.site).toString(),
+    url: new URL(withBase('/about'), Astro.site).toString(),
   },
 ];
 ---

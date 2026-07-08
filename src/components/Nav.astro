@@ -1,5 +1,6 @@
 ---
 import SettingsMenu from './SettingsMenu.astro';
+import { withBase } from '../lib/url';
 
 const navLinks = [
   { href: '/experience', label: 'Experience' },
@@ -9,14 +10,16 @@ const navLinks = [
   { href: '/about', label: 'About' },
 ];
 
+// Astro.url.pathname already includes `base`, so compare against base-aware hrefs too.
+const normalize = (p: string) => p.replace(/\/$/, '') || '/';
 const currentPath = Astro.url.pathname;
-const isHome = currentPath === '/';
+const isHome = normalize(currentPath) === normalize(withBase('/'));
 ---
 
 <header class="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
   <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
     <a
-      href="/"
+      href={withBase('/')}
       aria-current={isHome ? 'page' : undefined}
       class:list={[
         '-ml-2 flex items-center gap-2 rounded-md px-2 py-2.5 font-mono text-sm font-medium tracking-tight transition-colors hover:text-accent',
@@ -43,12 +46,12 @@ const isHome = currentPath === '/';
     <ul class="hidden items-center gap-8 md:flex">
       {
         navLinks.map((link) => {
-          const isActive =
-            currentPath === link.href || currentPath.startsWith(`${link.href}/`);
+          const href = withBase(link.href);
+          const isActive = normalize(currentPath) === normalize(href) || currentPath.startsWith(`${href}/`);
           return (
             <li>
               <a
-                href={link.href}
+                href={href}
                 class:list={[
                   'text-sm transition-colors hover:text-accent',
                   isActive ? 'text-accent' : 'text-muted-foreground',
@@ -67,7 +70,7 @@ const isHome = currentPath === '/';
       <SettingsMenu />
 
       <a
-        href="/resume.pdf"
+        href={withBase('/resume.pdf')}
         download
         class="hidden rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition-[color,border-color,transform] duration-200 ease-snappy hover:border-accent hover:text-accent active:scale-[0.97] active:duration-100 sm:inline-block"
       >
@@ -109,11 +112,12 @@ const isHome = currentPath === '/';
     <ul class="flex flex-col gap-1 overflow-hidden border-t border-border/60 px-6 py-3">
       {
         navLinks.map((link) => {
-          const isActive = currentPath === link.href || currentPath.startsWith(`${link.href}/`);
+          const href = withBase(link.href);
+          const isActive = normalize(currentPath) === normalize(href) || currentPath.startsWith(`${href}/`);
           return (
             <li>
               <a
-                href={link.href}
+                href={href}
                 class:list={[
                   'block rounded-md px-2 py-2.5 text-sm transition-colors hover:bg-muted hover:text-accent',
                   isActive ? 'text-accent' : 'text-muted-foreground',
@@ -128,7 +132,7 @@ const isHome = currentPath === '/';
       }
       <li>
         <a
-          href="/resume.pdf"
+          href={withBase('/resume.pdf')}
           download
           class="block rounded-md px-2 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-accent"
         >
