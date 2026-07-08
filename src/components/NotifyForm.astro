@@ -7,6 +7,7 @@ interface Props {
 
 const { courseTitle } = Astro.props;
 const hasButtondown = SITE.buttondownUsername.length > 0;
+const emailFieldId = `email-${courseTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 ---
 
 <div class="rounded-xl border border-border bg-primary/20 p-6">
@@ -23,11 +24,11 @@ const hasButtondown = SITE.buttondownUsername.length > 0;
         onsubmit={`window.open('https://buttondown.com/${SITE.buttondownUsername}', 'popupwindow')`}
         class="mt-4 flex flex-col gap-3 sm:flex-row"
       >
-        <label class="sr-only" for={`email-${courseTitle}`}>
+        <label class="sr-only" for={emailFieldId}>
           Email address
         </label>
         <input
-          id={`email-${courseTitle}`}
+          id={emailFieldId}
           type="email"
           name="email"
           required

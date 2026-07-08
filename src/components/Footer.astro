@@ -24,14 +24,24 @@ const year = new Date().getFullYear();
 
     <div class="mt-8 flex flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
       <p>&copy; {year} Nibras Ahmed Nizar. Built with Astro.</p>
-      <div class="flex gap-6">
-        <a href={SITE.linkedin} class="transition-colors hover:text-accent" rel="me noopener noreferrer" target="_blank">
+      <div class="-my-2.5 flex gap-6">
+        <a
+          href={SITE.linkedin}
+          class="-mx-1.5 inline-block px-1.5 py-2.5 transition-colors hover:text-accent"
+          rel="me noopener noreferrer"
+          target="_blank"
+        >
           LinkedIn
         </a>
-        <a href={SITE.github} class="transition-colors hover:text-accent" rel="me noopener noreferrer" target="_blank">
+        <a
+          href={SITE.github}
+          class="-mx-1.5 inline-block px-1.5 py-2.5 transition-colors hover:text-accent"
+          rel="me noopener noreferrer"
+          target="_blank"
+        >
           GitHub
         </a>
-        <a href="/rss.xml" class="transition-colors hover:text-accent">RSS</a>
+        <a href="/rss.xml" class="-mx-1.5 inline-block px-1.5 py-2.5 transition-colors hover:text-accent">RSS</a>
       </div>
     </div>
   </div>
