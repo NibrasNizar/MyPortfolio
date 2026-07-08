@@ -1,0 +1,79 @@
+---
+title: "Serverless Model-Serving Migration"
+summary: "Migrated six production ML models off fixed job-compute onto serverless Databricks Model Serving, cutting idle GPU spend while enabling elastic on-demand inference."
+role: "Primary Engineer"
+timeframe: "Oct 2024 – Jun 2026 (multi-quarter)"
+tags: ["MLOps", "Platform"]
+stack: ["Databricks Model Serving", "MLflow 3.x", "Python", "Unity Catalog", "OAuth M2M", "PostgreSQL", "asyncio"]
+featured: true
+order: 2
+metrics:
+  - label: "Models migrated"
+    value: "6+"
+  - label: "Compute model"
+    value: "Fixed → scale-to-zero"
+  - label: "Lineage tracking"
+    value: "100%"
+  - label: "Legacy tokens removed"
+    value: "15+ jobs"
+---
+
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+
+## The problem
+
+A production defect-analysis platform ran six ML models — image crop, inpainting,
+partition-path, canvas, image export, image search — on fixed job-compute. That means paying
+for GPU capacity whether or not it was serving a request, and scaling being a manual,
+lag-behind-demand exercise instead of an elastic one.
+
+**Constraints:**
+- Six different models, six different resource profiles — a one-size-fits-all serving
+  wrapper wouldn't hold up.
+- Multi-environment (dev/QA/prod) rollout had to happen without downtime on a platform already
+  in production use.
+- Every legacy job still carried hardcoded credentials — migrating serving infrastructure was
+  also the forcing function to fix that.
+
+## Architecture
+
+<ArchitectureDiagram
+  caption="Six models, one reusable serving pattern: MLflow PyFunc wrapper → Databricks Model Serving → observability layer."
+  nodes={[
+    { label: 'MLflow PyFunc Wrapper', sublabel: 'Scale-to-zero, per-model config' },
+    { label: 'Databricks Model Serving', sublabel: 'Serverless, elastic on-demand' },
+    { label: 'Observability Layer', sublabel: 'Tracing + AI-Gateway inference tables' },
+  ]}
+/>
+
+Each model sits behind a reusable MLflow PyFunc wrapper configured for scale-to-zero, so idle
+models stop costing anything. Unity Catalog volumes and MLflow 3.x unify model and artifact
+versioning across the team, giving 100% lineage tracking from a live model back to the
+training run that produced it. On top of serving, MLflow tracing plus AI-Gateway inference
+tables give every endpoint the same observability contract, so an incident on any of the six
+models gets diagnosed the same way.
+
+## Key decisions
+
+- **One wrapper pattern, six models.** Rather than hand-building serving code per model, a
+  reusable MLflow PyFunc wrapper standardized how every model exposed itself — the wrapper
+  did the scale-to-zero and telemetry plumbing once, not six times.
+- **OAuth M2M over hardcoded tokens.** Migrating serving was used as the forcing function to
+  remove hardcoded access tokens across 15+ legacy jobs and notebooks, closing a
+  credential-exposure risk platform-wide rather than leaving it for later.
+- **Multi-environment rollout, not a big-bang cutover.** Driving verification through
+  dev → QA → prod let each model migrate independently, so a bad migration on one model never
+  put the other five at risk.
+
+## Outcome
+
+All six models now run serverless with elastic on-demand inference, idle GPU/compute spend
+down, consistent production monitoring across every endpoint, and 100% lineage tracking from
+any live model back to its training run. The credential-hardening work that rode along with
+the migration closed off 15+ instances of hardcoded access tokens.
+
+## What I'd do differently
+
+The observability layer (MLflow tracing + inference tables) was built after the first two
+models were already live. Standardizing it before migrating model three onward would have
+saved re-instrumenting the earlier two.

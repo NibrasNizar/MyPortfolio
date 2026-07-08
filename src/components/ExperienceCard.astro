@@ -1,0 +1,30 @@
+---
+interface Props {
+  role: string;
+  org: string;
+  timeframe: string;
+  headlineOutcome: string;
+  wide?: boolean;
+}
+
+const { role, org, timeframe, headlineOutcome, wide = false } = Astro.props;
+---
+
+<div
+  class:list={[
+    'rounded-xl border border-l-4 border-border border-l-accent bg-primary/20 p-6 transition-[transform,border-color] duration-200 ease-snappy hover:-translate-y-1 hover:border-accent hover:border-l-accent',
+    wide ? 'sm:col-span-2' : '',
+  ]}
+>
+  <p class="font-mono text-xs text-muted-foreground">{timeframe}</p>
+  <h3 class="mt-2 text-lg font-semibold text-foreground">{role}</h3>
+  <p class="mt-1 text-sm text-muted-foreground">{org}</p>
+
+  <div class="mt-4">
+    <slot />
+  </div>
+
+  <p class="mt-4 border-t border-dashed border-border pt-3 font-mono text-[13px] text-accent">
+    {headlineOutcome}
+  </p>
+</div>

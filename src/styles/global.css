@@ -1,0 +1,161 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+@plugin "@tailwindcss/typography";
+
+/* Our theme is runtime/JS-driven via [data-theme], not Tailwind's default
+   prefers-color-scheme or .dark class -- point the dark: variant at it so
+   dark:prose-invert (and any other dark: utility) tracks the actual theme. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  --color-background: #0f172a;
+  --color-foreground: #f8fafc;
+  --color-primary: #1e293b;
+  --color-secondary: #334155;
+  --color-accent: #38bdf8;
+  --color-accent-foreground: #0f172a;
+  --color-muted: #272f42;
+  --color-muted-foreground: #94a3b8;
+  --color-border: #475569;
+  --color-destructive: #ef4444;
+  --color-ring: #38bdf8;
+
+  /* Liquid Glass surfaces: adaptive per theme, see overrides below */
+  --color-glass-surface: rgba(255, 255, 255, 0.06);
+  --color-glass-border: rgba(255, 255, 255, 0.14);
+  --color-glass-highlight: rgba(255, 255, 255, 0.12);
+
+  /* Heavier, less transparent frost for large panels (hero, modals). */
+  --color-glass-panel-surface: rgba(15, 23, 42, 0.42);
+  --color-glass-panel-border: rgba(255, 255, 255, 0.4);
+  --color-glass-panel-highlight: rgba(255, 255, 255, 0.3);
+
+  /* Soft-UI dual shadow: light source top-left, so a bright glow sits opposite
+     a dark cast shadow -- reads as extruded/embedded rather than bordered. */
+  --shadow-panel-light: rgba(255, 255, 255, 0.1);
+  --shadow-panel-dark: rgba(0, 0, 0, 0.65);
+
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", monospace;
+
+  --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Light theme overrides. Default (no attribute, or [data-theme="dark"]) stays the
+   dark tokens above -- dark is the committed brand identity, light is opt-in. */
+:root[data-theme="light"] {
+  --color-background: #eaf1f8;
+  --color-foreground: #0f172a;
+  --color-primary: #dbe7f2;
+  --color-secondary: #cde0ee;
+  --color-accent: #0369a1;
+  --color-accent-foreground: #ffffff;
+  --color-muted: #dde9f3;
+  --color-muted-foreground: #4b6178;
+  --color-border: #c1d5e6;
+  --color-destructive: #dc2626;
+  --color-ring: #0369a1;
+
+  --color-glass-surface: rgba(234, 241, 248, 0.6);
+  --color-glass-border: rgba(15, 23, 42, 0.1);
+  --color-glass-highlight: rgba(255, 255, 255, 0.75);
+
+  --color-glass-panel-surface: rgba(234, 241, 248, 0.65);
+  --color-glass-panel-border: rgba(15, 23, 42, 0.32);
+  --color-glass-panel-highlight: rgba(255, 255, 255, 0.9);
+
+  --shadow-panel-light: rgba(255, 255, 255, 0.85);
+  --shadow-panel-dark: rgba(15, 23, 42, 0.3);
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Smooth dark/light crossfade. Low specificity (universal selector) so any
+   component with its own more specific transition (buttons, cards, etc.)
+   correctly overrides this for the properties it already manages. */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-timing-function: ease;
+  transition-duration: 350ms;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-accent-foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Liquid Glass panel: frosted surface with an inner highlight, adaptive per theme.
+   Layered shadow reads as raised (soft distant lift + tight near shadow) with a
+   pressed inner-bottom edge so the surface feels embossed rather than pasted on. */
+.glass {
+  background-color: var(--color-glass-surface);
+  border: 1px solid var(--color-glass-border);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 var(--color-glass-highlight),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 8px 20px -6px rgba(0, 0, 0, 0.25);
+}
+
+/* Larger frosted surfaces (hero panel, modals): soft-UI dual shadow (light top-left,
+   dark bottom-right) instead of a hard border -- reads as embedded/extruded from
+   the surface behind it, like a neumorphic card, rather than a bordered overlay. */
+.glass-panel {
+  background-color: var(--color-glass-panel-surface);
+  border: none;
+  backdrop-filter: blur(22px) saturate(120%);
+  -webkit-backdrop-filter: blur(22px) saturate(120%);
+  box-shadow:
+    inset 0 1px 0 var(--color-glass-panel-highlight),
+    -14px -14px 32px -6px var(--shadow-panel-light),
+    18px 18px 40px -8px var(--shadow-panel-dark),
+    0 40px 90px -24px var(--shadow-panel-dark);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel {
+    background-color: var(--color-primary);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background-color: var(--color-primary);
+  }
+}
+
