@@ -1,0 +1,20 @@
+---
+title: "Docker & Kubernetes for ML"
+track: "mlops"
+summary: "Containerize and orchestrate ML workloads, from a single model container to a Kubernetes deployment that actually scales."
+outcomes:
+  - "Containerize an ML training and serving workload correctly, including GPU-aware images."
+  - "Deploy and scale ML workloads on Kubernetes (including OpenShift-style clusters)."
+  - "Reason about resource requests/limits for GPU workloads without over- or under-provisioning."
+modules:
+  - title: "Containerizing ML Workloads"
+    lessons: ["Docker fundamentals for ML", "GPU-aware images", "Multi-stage builds for smaller images"]
+  - title: "Orchestration"
+    lessons: ["Kubernetes core concepts", "OpenShift (ARO) specifics", "Autoscaling ML services"]
+prerequisites: ["Python for Engineers", "ML Pipelines & MLflow"]
+status: "coming-soon"
+order: 5
+---
+
+Covers the same container/orchestration stack used to run production agentic AI services —
+OpenShift and AKS — so the patterns here transfer directly to real deployment work.

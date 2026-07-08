@@ -1,0 +1,20 @@
+---
+title: "CI/CD for ML Systems"
+track: "mlops"
+summary: "Build a multi-environment Jenkins + Terraform pipeline with real quality gates: the same shape that ships production ML platforms."
+outcomes:
+  - "Design a dev → QA → prod pipeline with infrastructure as code (Terraform)."
+  - "Wire in meaningful quality gates: linting, security scanning (Bandit), SonarQube, and coverage thresholds."
+  - "Understand why gates belong in CI, not in code review, and how to enforce that without slowing teams down."
+modules:
+  - title: "Pipeline Design"
+    lessons: ["Jenkins pipeline fundamentals", "Terraform for environment consistency", "Multi-environment promotion strategy"]
+  - title: "Quality Gates That Matter"
+    lessons: ["SonarQube & Bandit integration", "Coverage thresholds done right", "OAuth M2M: killing hardcoded credentials"]
+prerequisites: ["Docker & Kubernetes for ML"]
+status: "coming-soon"
+order: 6
+---
+
+Modeled directly on a real production pipeline: the one that gates and ships six-plus ML
+models and an agentic AI platform across three concurrent programs.

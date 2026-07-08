@@ -1,0 +1,151 @@
+---
+---
+
+<div class="relative">
+  <button
+    id="settings-trigger"
+    type="button"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls="settings-panel"
+    class="inline-flex items-center justify-center rounded-md border border-border p-2.5 text-foreground transition-[border-color,transform] duration-200 ease-snappy hover:border-accent active:scale-90"
+  >
+    <svg
+      class="h-[18px] w-[18px]"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="3"></circle>
+      <path
+        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+      ></path>
+    </svg>
+    <span class="sr-only">Settings</span>
+  </button>
+
+  <div
+    id="settings-panel"
+    inert
+    class="glass pointer-events-none absolute right-0 top-full z-20 mt-2 w-40 origin-top-right scale-95 rounded-lg p-1.5 opacity-0 transition-[opacity,transform] duration-150 ease-snappy"
+  >
+    <p id="settings-panel-label" class="px-2.5 pb-1 pt-1.5 text-xs font-medium text-muted-foreground">
+      Theme
+    </p>
+    <div role="group" aria-labelledby="settings-panel-label" class="flex flex-col gap-1">
+      <button
+        type="button"
+        data-theme-option="light"
+        aria-pressed="false"
+        class="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-muted-foreground transition-colors duration-200 ease-snappy hover:bg-muted hover:text-foreground aria-pressed:bg-muted aria-pressed:text-accent"
+      >
+        <svg
+          class="h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="4"></circle>
+          <path
+            d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+          ></path>
+        </svg>
+        Light
+      </button>
+      <button
+        type="button"
+        data-theme-option="dark"
+        aria-pressed="false"
+        class="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm text-muted-foreground transition-colors duration-200 ease-snappy hover:bg-muted hover:text-foreground aria-pressed:bg-muted aria-pressed:text-accent"
+      >
+        <svg
+          class="h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        Dark
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const trigger = document.getElementById('settings-trigger');
+  const panel = document.getElementById('settings-panel');
+  const options = panel?.querySelectorAll<HTMLButtonElement>('[data-theme-option]');
+
+  const currentTheme = () =>
+    document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+
+  const syncOptions = () => {
+    const active = currentTheme();
+    options?.forEach((btn) => {
+      btn.setAttribute('aria-pressed', String(btn.dataset.themeOption === active));
+    });
+  };
+
+  const isOpen = () => trigger?.getAttribute('aria-expanded') === 'true';
+
+  const openPanel = () => {
+    panel?.removeAttribute('inert');
+    panel?.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+    panel?.classList.add('opacity-100', 'scale-100');
+    trigger?.setAttribute('aria-expanded', 'true');
+    syncOptions();
+    const activeBtn = panel?.querySelector<HTMLButtonElement>(
+      `[data-theme-option="${currentTheme()}"]`
+    );
+    (activeBtn ?? options?.[0])?.focus();
+  };
+
+  const closePanel = (refocusTrigger = false) => {
+    panel?.setAttribute('inert', '');
+    panel?.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+    panel?.classList.remove('opacity-100', 'scale-100');
+    trigger?.setAttribute('aria-expanded', 'false');
+    if (refocusTrigger) trigger?.focus();
+  };
+
+  trigger?.addEventListener('click', () => (isOpen() ? closePanel(true) : openPanel()));
+
+  options?.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const next = btn.dataset.themeOption === 'light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      syncOptions();
+      closePanel(true);
+    });
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!isOpen()) return;
+    const target = event.target as Node;
+    if (trigger?.contains(target) || panel?.contains(target)) return;
+    closePanel();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isOpen()) closePanel(true);
+  });
+
+  syncOptions();
+</script>
