@@ -15,6 +15,13 @@ export async function getStaticPaths() {
 const { course } = Astro.props;
 const { Content } = await render(course);
 
+const levelLabels: Record<string, string> = {
+  'no-code': 'No-Code Builder',
+  'low-code': 'Low-Code Developer',
+  'ai-native': 'AI-Native Engineer',
+  career: 'Career Track: Systems & Interviews',
+};
+
 const trackLabels: Record<string, string> = {
   foundations: 'Foundations',
   mlops: 'MLOps Engineering',
@@ -28,8 +35,15 @@ const trackLabels: Record<string, string> = {
 
     <div class="mt-4 flex flex-wrap items-center gap-3">
       <span class="rounded-full border border-border px-3 py-1 font-mono text-xs uppercase tracking-wide text-muted-foreground">
-        {trackLabels[course.data.track]}
+        {levelLabels[course.data.level]}
       </span>
+      {
+        course.data.track && (
+          <span class="rounded-full border border-border px-3 py-1 font-mono text-xs uppercase tracking-wide text-muted-foreground">
+            {trackLabels[course.data.track]}
+          </span>
+        )
+      }
       {
         course.data.status === 'coming-soon' ? (
           <span class="rounded-full border border-border px-3 py-1 font-mono text-xs uppercase tracking-wide text-muted-foreground">
