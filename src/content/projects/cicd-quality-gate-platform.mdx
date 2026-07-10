@@ -43,11 +43,11 @@ or not at all.
   ]}
 />
 
-Jenkins pipelines drive the build-and-deploy flow, with Terraform handling infrastructure as
-code so environments are provisioned consistently rather than hand-configured. Every change
-passes through formatting (Black/Pylint), static analysis and security scanning (SonarQube,
-Bandit), and a minimum 80% test coverage gate via pytest before it can move from dev toward
-QA and production.
+As the pipeline's owner, I built Jenkins pipelines to drive the build-and-deploy flow, with
+Terraform handling infrastructure as code so environments are provisioned consistently rather
+than hand-configured. Every change passes through formatting (Black/Pylint), static analysis
+and security scanning (SonarQube, Bandit), and a minimum 80% test coverage gate via pytest
+before it can move from dev toward QA and production.
 
 ## Key decisions
 
