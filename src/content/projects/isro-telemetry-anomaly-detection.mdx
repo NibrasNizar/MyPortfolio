@@ -43,7 +43,8 @@ looks nothing like a sudden spike, and a single detector rarely handles both.
   ]}
 />
 
-Rather than picking one detection method, the system ensembles four: rolling-mean and EMA
+As lead engineer, rather than picking one detection method, I designed the system to
+ensemble four: rolling-mean and EMA
 signals to catch gradual drift, an autoencoder to catch anomalies via reconstruction error,
 and a Robust Random Cut Forest to catch structural outliers a purely statistical method would
 miss. Combining outputs across all four gave broader anomaly-shape coverage than any single
