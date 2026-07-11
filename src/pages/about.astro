@@ -1,25 +1,22 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import AvailabilityBadge from '../components/AvailabilityBadge.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import { withBase } from '../lib/url';
 
-const certifications = [
-  { name: 'AWS Certified Machine Learning - Specialty', year: '2025' },
-  { name: 'MLOps Specialization, Duke University', year: '2025' },
-  { name: 'Google AI Essentials', year: '2025' },
-  { name: 'Introduction to Containers, Docker, Kubernetes & OpenShift, IBM', year: '2023' },
-];
+const featuredProjects = (await getCollection('projects'))
+  .filter((project) => project.data.featured)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 2);
 
-const awards = [
-  { name: 'ISRO "Respond Basket" Project Grant, ₹1,800,000', year: '2021-2022' },
-  { name: 'Intel "Above & Beyond" Institutional Winner', year: '2022, 2023' },
-];
-
-const languages = [
-  { name: 'English', level: 'Full professional fluency' },
-  { name: 'Arabic', level: 'Professional working proficiency. Works directly with Gulf clients in Arabic' },
-  { name: 'Hindi', level: 'Native' },
+const credentials = [
+  'AWS Certified Machine Learning – Specialty (2025)',
+  'MLOps Specialization, Duke University (2025)',
+  'Google AI Essentials (2025)',
+  'ISRO "Respond Basket" Grant, ₹1.8M (2022)',
+  '2× Intel "Above & Beyond" Award (2022, 2023)',
 ];
 
 const personId = new URL(withBase('/#person'), Astro.site).toString();
@@ -34,7 +31,7 @@ const extraJsonLd = [
 
 <BaseLayout
   title="About"
-  description="Education, certifications, awards, languages, and engineering philosophy for Nibras Ahmed Nizar, MLOps Engineer and Technical Lead."
+  description="Engineering philosophy, selected work, and credentials for Nibras Ahmed Nizar, MLOps Engineer and Technical Lead."
   extraJsonLd={extraJsonLd}
 >
   <div class="mx-auto max-w-3xl px-6 py-16">
@@ -66,86 +63,69 @@ const extraJsonLd = [
       <div class="mt-3">
         <AvailabilityBadge compact />
       </div>
-      <dl class="mt-4 grid gap-4 sm:grid-cols-2">
-        <div>
-          <dt class="text-xs text-muted-foreground">Current focus</dt>
-          <dd class="mt-1 text-sm text-foreground">
-            Leading agentic AI and MLOps platform delivery for a semiconductor enterprise client
-          </dd>
-        </div>
-        <div>
-          <dt class="text-xs text-muted-foreground">Open to</dt>
-          <dd class="mt-1 text-sm text-foreground">Senior MLOps / AI Platform / Technical Lead roles</dd>
-        </div>
-        <div>
-          <dt class="text-xs text-muted-foreground">Location</dt>
-          <dd class="mt-1 text-sm text-foreground">Bengaluru, India. Middle East relocation-ready, remote-friendly</dd>
-        </div>
-        <div>
-          <dt class="text-xs text-muted-foreground">Timezone</dt>
-          <dd class="mt-1 text-sm text-foreground">IST (UTC+5:30), regularly bridges PST/IST overlap</dd>
-        </div>
-      </dl>
-    </div>
-
-    <!-- Education -->
-    <div class="mt-12">
-      <h2 class="text-xl font-semibold text-foreground">Education</h2>
-      <div class="mt-4 space-y-4">
-        <div>
-          <p class="font-medium text-foreground">Master of Technology (M.Tech), Software Engineering</p>
-          <p class="text-sm text-muted-foreground">Ramaiah Institute of Technology, Bengaluru · GPA 9.2/10 · 2022</p>
-        </div>
-        <div>
-          <p class="font-medium text-foreground">Bachelor of Engineering (B.E.), Computer Science & Engineering</p>
-          <p class="text-sm text-muted-foreground">Ramaiah Institute of Technology, Bengaluru · GPA 7.0/10 · 2020</p>
-        </div>
+      <p class="mt-3 text-sm text-muted-foreground">
+        Leading agentic AI + MLOps delivery for a semiconductor enterprise client.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-border bg-background/60 px-3 py-1.5 text-xs text-foreground">
+          <svg class="h-3.5 w-3.5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          Bengaluru · relocation-open
+        </span>
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-border bg-background/60 px-3 py-1.5 text-xs text-foreground">
+          <svg class="h-3.5 w-3.5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          Remote-first, thrives in-room
+        </span>
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-border bg-background/60 px-3 py-1.5 text-xs text-foreground">
+          <svg class="h-3.5 w-3.5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          IST (UTC+5:30) · overlaps PST
+        </span>
       </div>
     </div>
 
-    <!-- Certifications -->
+    <!-- Selected work -->
     <div class="mt-12">
-      <h2 class="text-xl font-semibold text-foreground">Certifications</h2>
-      <ul class="mt-4 space-y-2">
+      <h2 class="text-xl font-semibold text-foreground">Selected work</h2>
+      <div class="mt-4 grid gap-6 sm:grid-cols-2">
         {
-          certifications.map((cert) => (
-            <li class="flex items-baseline justify-between gap-4 text-sm">
-              <span class="text-foreground">{cert.name}</span>
-              <span class="shrink-0 font-mono text-xs text-muted-foreground">{cert.year}</span>
-            </li>
+          featuredProjects.map((project) => (
+            <ProjectCard
+              href={withBase(`/projects/${project.id}`)}
+              title={project.data.title}
+              summary={project.data.summary}
+              stack={project.data.stack}
+              headlineMetric={project.data.metrics[0]}
+            />
           ))
         }
-      </ul>
+      </div>
+      <a href={withBase('/projects')} class="mt-4 inline-block font-mono text-sm text-accent hover:underline">
+        See all 7 projects →
+      </a>
     </div>
 
-    <!-- Awards -->
+    <!-- Credentials & recognition -->
     <div class="mt-12">
-      <h2 class="text-xl font-semibold text-foreground">Awards</h2>
-      <ul class="mt-4 space-y-2">
+      <h2 class="text-xl font-semibold text-foreground">Credentials &amp; recognition</h2>
+      <div class="mt-4 flex flex-wrap gap-2">
         {
-          awards.map((award) => (
-            <li class="flex items-baseline justify-between gap-4 text-sm">
-              <span class="text-foreground">{award.name}</span>
-              <span class="shrink-0 font-mono text-xs text-muted-foreground">{award.year}</span>
-            </li>
+          credentials.map((item) => (
+            <span class="rounded-full border border-border bg-primary/20 px-3 py-1.5 text-xs text-foreground">
+              {item}
+            </span>
           ))
         }
-      </ul>
-    </div>
-
-    <!-- Languages -->
-    <div class="mt-12">
-      <h2 class="text-xl font-semibold text-foreground">Languages</h2>
-      <ul class="mt-4 space-y-3">
-        {
-          languages.map((lang) => (
-            <li>
-              <span class="font-medium text-foreground">{lang.name}</span>
-              <span class="text-sm text-muted-foreground"> · {lang.level}</span>
-            </li>
-          ))
-        }
-      </ul>
+      </div>
     </div>
   </div>
 </BaseLayout>

@@ -6,22 +6,26 @@ brand
 
 ## Users
 
-Primary: Middle East / Gulf-market hiring managers and technical recruiters scanning for a
-Senior MLOps / AI Platform Engineer, evaluating candidates in roughly 8 seconds on first
-glance. They need role, stack, and measurable outcomes visible without scrolling, and they are
-specifically screening for production agentic AI + MLOps experience at enterprise scale.
+Primary: senior technical hiring managers and recruiters scanning for a Senior MLOps / AI
+Platform Engineer, evaluating candidates in roughly 8 seconds on first glance. They need role,
+stack, and measurable outcomes visible without scrolling, and they are specifically screening
+for production agentic AI + MLOps experience at enterprise scale. The copy stays
+market-agnostic by design — no named region/country targeting — even though the candidate's
+actual work history includes meaningful cross-border and Gulf-adjacent client delivery.
 
-Secondary: engineers researching "how to reach senior MLOps/AI level," browsing the
-Foundations → MLOps → AI/GenAI course tracks (mostly coming-soon in this phase) and considering
-joining a future notify-me / course waitlist.
+Secondary: learners at any starting point browsing the four-level course ladder — No-Code
+Builder → Low-Code Developer → AI-Native Engineer → Career Track: Systems & Interviews
+(mostly coming-soon in this phase) — from complete beginners building their first no-code app
+to engineers researching "how to reach senior MLOps/AI level," considering joining a future
+notify-me / course waitlist.
 
 ## Product Purpose
 
 A self-marketing engine, not just a portfolio: land inbound recruiter interest and freelance
 leads by proving — via full case studies with real architecture and real numbers, not just
-claims — that this candidate ships production agentic AI and MLOps at enterprise scale, is
-Arabic-speaking, and is Gulf-market-ready. Success looks like recruiter replies, freelance
-inquiries, and eventually a course waitlist with real signups.
+claims — that this candidate ships production agentic AI and MLOps at enterprise scale, with
+proven cross-border, multilingual client delivery. Success looks like recruiter replies,
+freelance inquiries, and eventually a course waitlist with real signups.
 
 ## Brand Personality
 
@@ -41,7 +45,7 @@ aren't the whole pitch.
 ## Design Principles
 
 - Positioning over decoration — the top of the page must state the specific, rare niche
-  (production agentic AI + MLOps at enterprise scale, Gulf-market-ready) in the first sentence.
+  (production agentic AI + MLOps at enterprise scale) in the first sentence.
 - Case studies over card grids — problem → constraints → architecture → decisions → outcome,
   every time; a card is an index into that, never the destination.
 - Curate ruthlessly — 3 featured flagships, 7 total; nothing weaker gets added to pad a grid.

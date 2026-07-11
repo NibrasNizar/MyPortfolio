@@ -43,9 +43,9 @@ partial failures silently corrupting the target system's state.
   ]}
 />
 
-An async, job-based replication pipeline moves records through a three-table staging model:
-one table tracks source records, one tracks transformation/validation state, and one tracks
-final migration status per record. That per-record status tracking is what makes the
+As designer and engineer on this pipeline, I built it as an async, job-based replication
+pipeline moving records through a three-table staging model: one table tracks source records,
+one tracks transformation/validation state, and one tracks final migration status per record. That per-record status tracking is what makes the
 pipeline safely resumable — a failure partway through a 21,000-image run only needs to
 re-process what didn't complete, not the whole batch.
 
