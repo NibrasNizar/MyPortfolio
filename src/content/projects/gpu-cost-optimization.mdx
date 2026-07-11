@@ -32,11 +32,11 @@ a planning review.
 
 ## The decision
 
-Rather than negotiating a smaller fixed allocation (which just trades one static cost for a
-smaller static cost, with the same underlying waste), the fix was architectural: move to an
-on-demand testing strategy where GPU capacity is provisioned when a test run actually needs
-it and released immediately after, combined with an integrated-tool architecture that reduced
-redundant provisioning across teams.
+As technical lead on this call, I chose not to negotiate a smaller fixed allocation (which
+just trades one static cost for a smaller static cost, with the same underlying waste) and
+went architectural instead: move to an on-demand testing strategy where GPU capacity is
+provisioned when a test run actually needs it and released immediately after, combined with
+an integrated-tool architecture that reduced redundant provisioning across teams.
 
 This is the same scale-to-zero principle behind the [serverless model-serving
 migration](/projects/serverless-model-serving), applied to test infrastructure instead of
