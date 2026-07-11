@@ -32,7 +32,8 @@ const courses = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/courses' }),
   schema: z.object({
     title: z.string(),
-    track: z.enum(['foundations', 'mlops', 'genai']),
+    level: z.enum(['no-code', 'low-code', 'ai-native', 'career']),
+    track: z.enum(['foundations', 'mlops', 'genai']).optional(),
     summary: z.string(),
     outcomes: z.array(z.string()),
     modules: z.array(

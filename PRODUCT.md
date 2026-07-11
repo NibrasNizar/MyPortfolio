@@ -13,9 +13,11 @@ for production agentic AI + MLOps experience at enterprise scale. The copy stays
 market-agnostic by design — no named region/country targeting — even though the candidate's
 actual work history includes meaningful cross-border and Gulf-adjacent client delivery.
 
-Secondary: engineers researching "how to reach senior MLOps/AI level," browsing the
-Foundations → MLOps → AI/GenAI course tracks (mostly coming-soon in this phase) and considering
-joining a future notify-me / course waitlist.
+Secondary: learners at any starting point browsing the four-level course ladder — No-Code
+Builder → Low-Code Developer → AI-Native Engineer → Career Track: Systems & Interviews
+(mostly coming-soon in this phase) — from complete beginners building their first no-code app
+to engineers researching "how to reach senior MLOps/AI level," considering joining a future
+notify-me / course waitlist.
 
 ## Product Purpose
 
